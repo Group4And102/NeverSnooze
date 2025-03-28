@@ -72,7 +72,12 @@ NeverSnooze is an innovative alarm app that ensures users wake up on time and st
 
 
 ### [BONUS] Digital Wireframes & Mockups
+
+<img width="996" alt="Screenshot 2025-03-27 at 11 32 45 PM" src="https://github.com/user-attachments/assets/66b60fad-be69-4145-85b0-c80e655aacf5" />
+
 ### [BONUS] Interactive Prototype
+
+![prototype](https://github.com/user-attachments/assets/d3a0746c-438b-4faf-bd6d-abe3d7c54d88)
 
 
 
