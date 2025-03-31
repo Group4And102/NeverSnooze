@@ -84,6 +84,8 @@ NeverSnooze is an innovative alarm app that ensures users wake up on time and st
 
 ## GitHub Project board
 [Add screenshot of your Project Board with three milestones visible in this section]
+<img width="1099" alt="Screenshot 2025-03-31 at 3 44 27 PM" src="https://github.com/user-attachments/assets/0a318f6d-d5c1-46db-992e-6ca98f5cd42d" />
+
 # Issue cards
 * [Add screenshot of your Project Board with the issues that you've been working on for this unit's milestone] 
 * [Add screenshot of your Project Board with the issues that you're working on in the NEXT sprint. It should include issues for next unit with assigned owners.]
