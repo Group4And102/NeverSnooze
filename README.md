@@ -89,8 +89,14 @@ NeverSnooze is an innovative alarm app that ensures users wake up on time and st
 
 
 # Issue cards
-* [Add screenshot of your Project Board with the issues that you've been working on for this unit's milestone] 
-* [Add screenshot of your Project Board with the issues that you're working on in the NEXT sprint. It should include issues for next unit with assigned owners.]
+Issues to work on for **Milestone 1**: 
+
+<img width="344" alt="Screenshot 2025-03-31 at 3 53 43 PM" src="https://github.com/user-attachments/assets/c2fafdd7-672a-4f90-bb69-e832a22c665c" />
+
+Issues to work on for **Milestone 2**: 
+
+<img width="344" alt="Screenshot 2025-03-31 at 3 56 46 PM" src="https://github.com/user-attachments/assets/16d58373-d2f4-46b8-8633-53087aaa40a8" />
+
 ## Issues worked on this sprint
 * List the issues you completed this sprint
 * [Add giphy that shows current build progress for Milestone 2. Note: We will be looking for progression of work between Milestone 2 and 3. Make sure your giphys are not duplicated and clearly show the change from Sprint 1 to 2.]
