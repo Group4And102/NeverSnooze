@@ -103,9 +103,15 @@ Issues to work on for **Milestone 2**:
 - [✅] Alarm Setting Screen: Allows users to set new alarms with custom times and labels.
 
 
-Home Screen = [NeverSnoozeMainScreen.webm](https://github.com/user-attachments/assets/3a0e8081-8190-4115-b2d1-ac23392fcfe4)
+### App Home Screen
+<img src="https://github.com/user-attachments/assets/c192a3db-61b5-4578-be3c-b98dd39cd08c" width="300">
 
-Alarm Ring Configured = https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3 
+### Alarm Setting Screen
+<img src="https://github.com/user-attachments/assets/17ac609d-6924-4f57-8482-aaf44cd5c14b" width="300">
+
+### Alarm Ring Configured
+https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3  
+
 
 
 
