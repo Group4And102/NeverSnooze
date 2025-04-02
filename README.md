@@ -1,5 +1,5 @@
 # NeverSnooze
-# Milestone 1 - StockElite (Unit 7)
+# Milestone 1 - NeverSnooze (Unit 7)
 
 ## Table of Contents
 1. Overview
