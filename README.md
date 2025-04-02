@@ -98,12 +98,14 @@ Issues to work on for **Milestone 2**:
 <img width="344" alt="Screenshot 2025-03-31 at 3 56 46 PM" src="https://github.com/user-attachments/assets/16d58373-d2f4-46b8-8633-53087aaa40a8" />
 
 ## Issues worked on this sprint
-* List the issues you completed this sprint
-* [Add giphy that shows current build progress for Milestone 2. Note: We will be looking for progression of work between Milestone 2 and 3. Make sure your giphys are not duplicated and clearly show the change from Sprint 1 to 2.]
+- [✅] Alarm Trigger on App Launch: Set an alarm to trigger 5 seconds after the app is opened.
+- [✅] Alarm Home Screen: Displays a list of all the alarms set by the user.
+- [✅] Alarm Setting Screen: Allows users to set new alarms with custom times and labels.
+
 
 Home Screen = [NeverSnoozeMainScreen.webm](https://github.com/user-attachments/assets/3a0e8081-8190-4115-b2d1-ac23392fcfe4)
+Alarm Ring Configured = https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3 
 
-Alarm Ring Configured = https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3
 
 
 
