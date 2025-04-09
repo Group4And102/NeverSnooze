@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#10103A"
+    tools:context=".MainActivity">
+
+    <!-- Time Picker -->
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <!-- Day Selector Row -->
+    <LinearLayout
+        android:id="@+id/daySelectorLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/timePicker"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Day Buttons -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSun"
+            style="@style/CircleDayButton"
+            android:text="S" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMon"
+            style="@style/CircleDayButton"
+            android:text="M" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTue"
+            style="@style/CircleDayButton"
+            android:text="T" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnWed"
+            style="@style/CircleDayButton"
+            android:text="W" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnThu"
+            style="@style/CircleDayButton"
+            android:text="T" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFri"
+            style="@style/CircleDayButton"
+            android:text="F" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSat"
+            style="@style/CircleDayButton"
+            android:text="S" />
+    </LinearLayout>
+
+    <!-- Info Card -->
+    <LinearLayout
+        android:id="@+id/infoCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_card"
+        android:elevation="4dp"
+        android:outlineProvider="background"
+        android:clipToOutline="true"
+        android:padding="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="32dp"
+        app:layout_constraintTop_toBottomOf="@id/daySelectorLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Row 1: Label -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Label:"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/alarmLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Alarm name"
+                android:textColor="#FFFFFF"
+                android:inputType="textPersonName"
+                android:backgroundTint="#FFFFFF"
+                android:textColorHint="#888888"
+                android:textSize="15dp"/>
+        </LinearLayout>
+
+        <!-- Row 2: Sound -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sound"
+                android:textColor="#FFFFFF"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:id="@+id/selectSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Radar"
+                android:textColor="#FFFFFF"
+                android:clickable="true"
+                android:focusable="true"
+                android:textStyle="bold"
+                android:drawableEnd="@drawable/ic_chevron_right"
+                android:paddingEnd="8dp"
+                android:textSize="15dp"/>
+        </LinearLayout>
+
+        <!-- Row 3: Activity -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Activity"
+                android:textColor="#FFFFFF"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose one"
+                android:textColor="#FFFFFF"
+                android:textSize="15dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Create Alarm Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/createAlarmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Alarm"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/purple_500"
+        app:rippleColor="#FFFFFF"
+        android:layout_marginTop="24dp"
+        app:cornerRadius="16dp"
+        app:layout_constraintTop_toBottomOf="@id/infoCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,27 @@
 <resources>
-    <style name="DayToggleStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+
+    <!-- Circular toggle button for day selectors -->
+    <style name="CircleDayButton" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_margin">4dp</item>
         <item name="cornerRadius">24dp</item>
-        <item name="strokeColor">#888888</item>
-        <item name="strokeWidth">1dp</item>
+        <item name="android:textColor">#FFFFFF</item>
         <item name="android:backgroundTint">#444444</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetRight">0dp</item>
+        <item name="android:checkable">true</item> <!-- Important for staying selected -->
+        <item name="rippleColor">#66FFFFFF</item> <!-- Light ripple feedback -->
     </style>
+
+    <!-- Rounded background for the info card section -->
+    <style name="CardBackgroundRounded">
+        <item name="android:background">@drawable/rounded_card</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Rounded purple button like 'Create Alarm' -->
+    <style name="RoundedButton">
+        <item name="android:background">@drawable/rounded_button</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
 </resources>
