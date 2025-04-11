@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NeverSnooze"
         tools:targetApi="31">
+        <activity android:name=".mathactivity.MathActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
