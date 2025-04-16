@@ -109,6 +109,7 @@ Issues to work on for **Milestone 2**:
 
 # Milestone 3 - Build Sprint 2 (Unit 9)
 ## GitHub Project board
+<img width="1065" alt="Screenshot 2025-04-15 at 11 06 03 PM" src="https://github.com/user-attachments/assets/73301708-af69-4979-a7d3-74d9785806df" />
 
 ## Completed user stories
 - Adding alarms
