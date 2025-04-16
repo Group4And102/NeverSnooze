@@ -117,8 +117,6 @@ https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3
 **Note** Alarm ringing screen in progress 
 
 
-
-
-
-
+### Object Recognition using the camera
+https://github.com/user-attachments/assets/dcfe7a44-8916-461b-94c0-3ba16ba96f3f
 
