@@ -106,6 +106,18 @@ Issues to work on for **Milestone 2**:
 ### App Home Screen
 <img src="https://github.com/user-attachments/assets/c192a3db-61b5-4578-be3c-b98dd39cd08c" width="300">
 
+
+# Milestone 3 - Build Sprint 2 (Unit 9)
+## GitHub Project board
+
+## Completed user stories
+- Adding alarms
+- Deleting alarms
+- Camera feature
+## Pending user stories
+- Updating database with new alarms
+- Sensor feature
+- Puzzle feature
 ### Alarm Setting Screen
 https://github.com/user-attachments/assets/5293ec45-30ca-4820-8823-78da281c6b96
 
@@ -113,11 +125,12 @@ https://github.com/user-attachments/assets/5293ec45-30ca-4820-8823-78da281c6b96
 ### Alarm Ring Configured
 https://github.com/user-attachments/assets/6a5b8497-6d73-4b7e-8e7e-8c7eaf0b01e3  
 
-
-
 ### Activity Screen
 <img width="557" alt="Screenshot 2025-04-15 at 10 55 23 PM" src="https://github.com/user-attachments/assets/2a25de8a-4a48-46f0-9873-b5bc4800b467" />
 
 ### Object Recognition using the camera
 https://github.com/user-attachments/assets/dcfe7a44-8916-461b-94c0-3ba16ba96f3f
+
+### App Demo Video
+In progress 
 
