@@ -1,0 +1,11 @@
+.idea/caches/
+.idea/deviceStreaming.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/vcs.xml
+app/.idea/
+*.iml
+.gradle/
+build/
+app/build/
