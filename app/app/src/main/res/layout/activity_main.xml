@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/navy_blue"
+    android:id="@+id/rootLayout"
     tools:context=".MainActivity">
-
     <!-- Gray container for alarms -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/alarmContainer"
         android:layout_width="377dp"
         android:layout_height="563dp"
-        android:background="@color/navy_blue"
+        android:background="#10103A"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonBar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,17 +27,52 @@
             android:clipToPadding="false"
             android:padding="8dp"
             android:scrollbars="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/buttonBar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleText"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
+        <!-- Add this empty view -->
+        <LinearLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/baseline_add_24"
+                android:contentDescription="No alarms icon"
+                android:tint="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No alarms yet"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap the + button to add your first alarm"
+                android:textSize="14sp"
+                android:textColor="#CCCCCC"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Title -->
-
-    <!-- Bottom button bar -->
-
     <TextView
         android:id="@+id/titleText"
         android:layout_width="312dp"
@@ -56,6 +91,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Bottom button bar -->
     <LinearLayout
         android:id="@+id/buttonBar"
         android:layout_width="match_parent"
@@ -67,8 +103,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-
         <ImageButton
             android:id="@+id/themeToggleButton"
             android:layout_width="48dp"
@@ -77,7 +111,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_sunny_24"
             />
-
         <ImageButton
             android:id="@+id/addButton"
             android:layout_width="48dp"
@@ -85,8 +118,7 @@
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_add_24"
-             />
-
+            />
         <ImageButton
             android:id="@+id/trashButton"
             android:layout_width="48dp"
@@ -94,7 +126,6 @@
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_delete_24"
-             />
+            />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
