@@ -26,4 +26,101 @@ class AlarmDatabaseHelper(context: Context) :
         db.execSQL(AlarmContract.SQL_DELETE_TABLE)
         onCreate(db)
     }
+
+    fun updateAlarm(alarm: Alarm) {
+        val db = writableDatabase
+        val values = android.content.ContentValues().apply {
+            put(AlarmContract.AlarmEntry.COLUMN_HOUR, alarm.hour)
+            put(AlarmContract.AlarmEntry.COLUMN_MINUTE, alarm.minute)
+            put(AlarmContract.AlarmEntry.COLUMN_DAYS, alarm.daysToString())
+            put(AlarmContract.AlarmEntry.COLUMN_LABEL, alarm.label)
+            put(AlarmContract.AlarmEntry.COLUMN_SOUND, alarm.sound)
+            put(AlarmContract.AlarmEntry.COLUMN_ENABLED, if (alarm.enabled) 1 else 0) // Store enabled state as 1 (true) or 0 (false)
+        }
+
+        // Update the alarm in the database
+        db.update(
+            AlarmContract.AlarmEntry.TABLE_NAME,
+            values,
+            "${AlarmContract.AlarmEntry.COLUMN_ID} = ?",
+            arrayOf(alarm.id.toString())
+        )
+    }
+
+    /**
+     * Get all alarms from the database
+     * @return List of all alarms stored in the database
+     */
+    fun getAlarms(): List<Alarm> {
+        val alarms = mutableListOf<Alarm>()
+        val db = this.readableDatabase
+        val cursor = db.query(
+            AlarmContract.AlarmEntry.TABLE_NAME, // The table to query
+            null, // Get all columns
+            null, // No WHERE clause
+            null, // No WHERE arguments
+            null, // No GROUP BY
+            null, // No HAVING
+            null  // Default sort order
+        )
+
+        // Iterate through all rows and add to list
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getLong(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_ID))
+                val hour = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_HOUR))
+                val minute = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_MINUTE))
+                val daysString = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_DAYS))
+                val label = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_LABEL))
+                val sound = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_SOUND))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_ENABLED)) == 1
+
+                // Convert daysString to a List<Boolean>
+                val days = Alarm.daysFromString(daysString)
+
+                // Create and add the alarm to our list
+                alarms.add(Alarm(id, hour, minute, days, label, sound, enabled))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return alarms
+    }
+
+    /**
+     * Get a single alarm by its ID
+     * @param id The ID of the alarm to retrieve
+     * @return The Alarm object or null if not found
+     */
+    fun getAlarmById(id: Long): Alarm? {
+        val db = this.readableDatabase
+        val cursor = db.query(
+            AlarmContract.AlarmEntry.TABLE_NAME,
+            null,
+            "${AlarmContract.AlarmEntry.COLUMN_ID} = ?",
+            arrayOf(id.toString()),
+            null, null, null
+        )
+
+        return if (cursor.moveToFirst()) {
+            val hour = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_HOUR))
+            val minute = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_MINUTE))
+            val daysString = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_DAYS))
+            val label = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_LABEL))
+            val sound = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_SOUND))
+            val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_ENABLED)) == 1
+
+            val days = Alarm.daysFromString(daysString)
+
+            Alarm(id, hour, minute, days, label, sound, enabled)
+        } else {
+            null
+        }.also { cursor.close() }
+    }
+
+
+
+
+
+
 }

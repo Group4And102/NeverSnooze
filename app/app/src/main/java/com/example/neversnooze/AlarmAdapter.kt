@@ -23,7 +23,6 @@ class AlarmAdapter(private var alarms: List<Alarm>) :
             .inflate(R.layout.item_alarm_card, parent, false)
         return AlarmViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val alarm = alarms[position]
 
@@ -44,15 +43,33 @@ class AlarmAdapter(private var alarms: List<Alarm>) :
         // Set the enabled status
         holder.enableSwitch.isChecked = alarm.enabled
 
-        // Set listener for switch (not implemented yet)
+        // Set listener for switch
         holder.enableSwitch.setOnCheckedChangeListener { _, isChecked ->
-            // In a real app, you would update the database here
-            // For now, just show a toast
+            // Update the alarm object with the new enabled state
+            val updatedAlarm = alarm.copy(enabled = isChecked)
+
+            // Update the alarm in the database
+            val dbHelper = AlarmDatabaseHelper(holder.itemView.context)
+            dbHelper.updateAlarm(updatedAlarm)
+
+            // Show a toast for feedback
             Toast.makeText(holder.itemView.context,
-                 "Alarm ${if (isChecked) "enabled" else "disabled"}",
-                 Toast.LENGTH_SHORT).show()
+                "Alarm ${if (isChecked) "enabled" else "disabled"}",
+                Toast.LENGTH_SHORT).show()
+
+            // Update the alarm list in the adapter and notify RecyclerView
+            val updatedAlarms = alarms.toMutableList().apply { set(position, updatedAlarm) }
+            updateAlarms(updatedAlarms)
+
+            // Schedule or cancel the alarm based on the enabled state
+            if (isChecked) {
+                AlarmScheduler.scheduleAlarm(holder.itemView.context, updatedAlarm)
+            } else {
+                AlarmScheduler.cancelAlarm(holder.itemView.context, updatedAlarm)
+            }
         }
     }
+
 
     override fun getItemCount() = alarms.size
 

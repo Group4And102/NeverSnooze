@@ -131,6 +131,15 @@ class AlarmCreateActivity : AppCompatActivity() {
 
         if (newRowId != -1L) {
             Toast.makeText(this, "Alarm created successfully", Toast.LENGTH_SHORT).show()
+
+            // After saving to the database, get the saved alarm with its ID
+            val savedAlarm = dbHelper.getAlarmById(newRowId)
+
+            // Schedule the alarm with the system
+            if (savedAlarm != null) {
+                AlarmScheduler.scheduleAlarm(this, savedAlarm)
+            }
+
             // Close this activity and return to the main activity
             finish()
         } else {
