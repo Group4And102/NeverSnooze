@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#10103A"
-    tools:context=".MainActivity">
+    tools:context=".AlarmCreateActivity">
 
     <!-- Time Picker -->
     <TimePicker
