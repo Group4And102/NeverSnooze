@@ -93,7 +93,11 @@ object AlarmScheduler {
     /**
      * Schedule a one-time (non-repeating) alarm
      */
-    private fun scheduleOneTimeAlarm(context: Context, alarm: Alarm, alarmManager: AlarmManager) {
+    private fun scheduleOneTimeAlarm(
+        context: Context,
+        alarm: Alarm,
+        alarmManager: AlarmManager
+    ) {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, alarm.hour)
@@ -112,15 +116,38 @@ object AlarmScheduler {
 
         Log.d(TAG, "Scheduling one-time alarm at ${alarm.hour}:${alarm.minute}, time=${calendar.timeInMillis}")
 
-        // Set exact alarm
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.set(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                intent
-            )
+        // Set exact alarm with highest priority
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    intent
+                )
+            } else {
+                // If we can't set exact alarms, try to set it as close as possible
+                val currentTime = System.currentTimeMillis()
+                if (calendar.timeInMillis - currentTime <= 60 * 1000) { // If within 1 minute
+                    // Execute immediately
+                    val broadcastIntent = Intent(context, AlarmReceiver::class.java).apply {
+                        action = "com.example.neversnooze.ALARM_TRIGGERED"
+                        putExtra("ALARM_ID", alarm.id)
+                        putExtra("ALARM_HOUR", alarm.hour)
+                        putExtra("ALARM_MINUTE", alarm.minute)
+                        putExtra("ALARM_LABEL", alarm.label)
+                        putExtra("ALARM_SOUND", alarm.sound)
+                    }
+                    context.sendBroadcast(broadcastIntent)
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        intent
+                    )
+                }
+            }
         } else {
-            alarmManager.setExactAndAllowWhileIdle(
+            alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
                 intent

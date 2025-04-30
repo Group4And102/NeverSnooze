@@ -3,26 +3,33 @@ package com.example.neversnooze
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-class AlarmAdapter(private var alarms: List<Alarm>) :
-    RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
+class AlarmAdapter(
+    private var alarms: List<Alarm>,
+    private val onAlarmClick: (Alarm) -> Unit
+) : RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
 
-    class AlarmViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val timeText: TextView = view.findViewById(R.id.textTime)
-        val daysText: TextView = view.findViewById(R.id.textDays)
-        val labelText: TextView = view.findViewById(R.id.textLabel)
-        val enableSwitch: Switch = view.findViewById(R.id.switchEnable)
+    private var isDeleteMode = false
+
+    class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val timeText: TextView = itemView.findViewById(R.id.timeText)
+        val daysText: TextView = itemView.findViewById(R.id.daysText)
+        val labelText: TextView = itemView.findViewById(R.id.labelText)
+        val enableSwitch: Switch = itemView.findViewById(R.id.enableSwitch)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_alarm_card, parent, false)
+            .inflate(R.layout.item_alarm, parent, false)
         return AlarmViewHolder(view)
     }
+
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val alarm = alarms[position]
 
@@ -68,13 +75,30 @@ class AlarmAdapter(private var alarms: List<Alarm>) :
                 AlarmScheduler.cancelAlarm(holder.itemView.context, updatedAlarm)
             }
         }
-    }
 
+        // Handle delete mode
+        holder.deleteButton.visibility = if (isDeleteMode) View.VISIBLE else View.GONE
+        holder.deleteButton.setOnClickListener {
+            onAlarmClick(alarm)
+        }
+
+        // Handle item click
+        holder.itemView.setOnClickListener {
+            if (isDeleteMode) {
+                onAlarmClick(alarm)
+            }
+        }
+    }
 
     override fun getItemCount() = alarms.size
 
     fun updateAlarms(newAlarms: List<Alarm>) {
         this.alarms = newAlarms
+        notifyDataSetChanged()
+    }
+
+    fun setDeleteMode(isDeleteMode: Boolean) {
+        this.isDeleteMode = isDeleteMode
         notifyDataSetChanged()
     }
 }

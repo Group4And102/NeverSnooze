@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
+import android.app.AlarmManager
+import android.content.Context
+import android.os.Build
+import android.provider.Settings
 
 class ButtonChallengeActivity : AppCompatActivity() {
     private lateinit var counterText: TextView
@@ -34,9 +38,29 @@ class ButtonChallengeActivity : AppCompatActivity() {
             
             if (pressCount >= 10) {
                 // Challenge completed, snooze the alarm
-                snoozeAlarm()
+                if (canScheduleExactAlarms()) {
+                    snoozeAlarm()
+                } else {
+                    requestExactAlarmPermission()
+                }
                 finish()
             }
+        }
+    }
+
+    private fun canScheduleExactAlarms(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.canScheduleExactAlarms()
+        } else {
+            true
+        }
+    }
+
+    private fun requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            startActivity(intent)
         }
     }
 

@@ -49,6 +49,12 @@
             android:turnScreenOn="true"
             android:theme="@style/Theme.NeverSnooze.NoActionBar" />
 
+        <activity
+            android:name=".MathActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
         <!-- Add this receiver for alarm triggers -->
         <receiver
             android:name=".AlarmReceiver"

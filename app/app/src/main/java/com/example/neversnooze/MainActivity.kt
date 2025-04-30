@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var alarmAdapter: AlarmAdapter
     private lateinit var dbHelper: AlarmDatabaseHelper
+    private lateinit var trashButton: AppCompatImageButton
+    private var isDeleteMode = false
 
     @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,8 +34,13 @@ class MainActivity : AppCompatActivity() {
         dbHelper = AlarmDatabaseHelper(this)
 
         recyclerView = findViewById(R.id.alarmRecyclerView)
+        trashButton = findViewById(R.id.trashButton)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        alarmAdapter = AlarmAdapter(emptyList())
+        alarmAdapter = AlarmAdapter(emptyList()) { alarm ->
+            if (isDeleteMode) {
+                deleteAlarm(alarm)
+            }
+        }
         recyclerView.adapter = alarmAdapter
 
         val sharedPrefs = getSharedPreferences("app_preferences", MODE_PRIVATE)
@@ -46,11 +54,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val themeToggleButton = findViewById<AppCompatImageButton>(R.id.themeToggleButton)
-        themeToggleButton.setOnClickListener {
-            isDarkTheme = !isDarkTheme
-            applyTheme(isDarkTheme)
-            sharedPrefs.edit().putBoolean("dark_theme", isDarkTheme).apply()
+        trashButton.setOnClickListener {
+            toggleDeleteMode()
         }
     }
 
@@ -173,5 +178,33 @@ class MainActivity : AppCompatActivity() {
             trashButton.imageTintList = buttonTint
             themeToggleButton.imageTintList = buttonTint
         }
+    }
+
+    private fun toggleDeleteMode() {
+        isDeleteMode = !isDeleteMode
+        alarmAdapter.setDeleteMode(isDeleteMode)
+        
+        // Update trash button appearance
+        if (isDeleteMode) {
+            trashButton.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_red_light))
+        } else {
+            trashButton.setColorFilter(ContextCompat.getColor(this, android.R.color.white))
+        }
+    }
+
+    private fun deleteAlarm(alarm: Alarm) {
+        // Cancel the alarm first
+        AlarmScheduler.cancelAlarm(this, alarm)
+
+        // Delete from database
+        val db = dbHelper.writableDatabase
+        db.delete(
+            AlarmContract.AlarmEntry.TABLE_NAME,
+            "${AlarmContract.AlarmEntry.COLUMN_ID} = ?",
+            arrayOf(alarm.id.toString())
+        )
+
+        // Reload alarms
+        loadAlarms()
     }
 }

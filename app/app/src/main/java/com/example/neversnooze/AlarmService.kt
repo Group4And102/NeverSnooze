@@ -25,6 +25,7 @@ class AlarmService : Service() {
     private var vibrator: Vibrator? = null
     private var wakeLock: PowerManager.WakeLock? = null
     private var alarmId: Long = -1
+    private var currentChallengeIndex = 0
 
     companion object {
         private const val TAG = "AlarmService"
@@ -74,8 +75,19 @@ class AlarmService : Service() {
         // Play alarm sound
         playAlarmSound(sound)
 
-        // Create and show button challenge activity
-        val challengeIntent = Intent(this, ButtonChallengeActivity::class.java).apply {
+        // Cycle through challenges in order
+        val challengeTypes = listOf(
+            ButtonChallengeActivity::class.java,
+            MathActivity::class.java
+            // Add other challenge types here when implemented
+        )
+
+        // Get the next challenge type
+        val selectedChallenge = challengeTypes[currentChallengeIndex]
+        currentChallengeIndex = (currentChallengeIndex + 1) % challengeTypes.size
+
+        // Create and show the selected challenge activity
+        val challengeIntent = Intent(this, selectedChallenge).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra("ALARM_ID", alarmId)
             putExtra("ALARM_HOUR", hour)
@@ -105,7 +117,13 @@ class AlarmService : Service() {
     }
 
     private fun createNotification(hour: Int, minute: Int, label: String): Notification {
-        val notificationIntent = Intent(this, ButtonChallengeActivity::class.java).apply {
+        val challengeTypes = listOf(
+            ButtonChallengeActivity::class.java,
+            MathActivity::class.java
+        )
+        val selectedChallenge = challengeTypes[currentChallengeIndex]
+
+        val notificationIntent = Intent(this, selectedChallenge).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("ALARM_ID", alarmId)
             putExtra("ALARM_HOUR", hour)
@@ -122,11 +140,12 @@ class AlarmService : Service() {
 
         val formattedTime = String.format("%02d:%02d", hour, minute)
         val title = if (label.isNotEmpty()) label else "Alarm"
+        val challengeType = if (selectedChallenge == ButtonChallengeActivity::class.java) "Button Press" else "Math"
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
-            .setContentText("$formattedTime - Complete challenge to stop alarm")
-            .setSmallIcon(R.drawable.ic_notification_alarm) // Make sure you have this resource
+            .setContentText("$formattedTime - Complete $challengeType challenge to stop alarm")
+            .setSmallIcon(R.drawable.ic_notification_alarm)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pendingIntent, true)
