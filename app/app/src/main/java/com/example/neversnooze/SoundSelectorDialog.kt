@@ -24,9 +24,7 @@ class SoundSelectorDialog : BottomSheetDialogFragment() {
 
     // Sample sound options
     private val soundOptions = listOf(
-        "Radar", "Beacon", "Chimes", "Circuit", "Constellation",
-        "Cosmic", "Crystal", "Ripples", "Silk", "Summit"
-    )
+        "Radar", "Chimes", "Ripples")
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
