@@ -11,12 +11,13 @@ class AlarmDatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 3
         const val DATABASE_NAME = "Alarms.db"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         // Create the alarms table
+        android.util.Log.d("DB", "onCreate called — creating alarms table") // ✅ Add this log
         db.execSQL(AlarmContract.SQL_CREATE_TABLE)
     }
 
@@ -36,6 +37,7 @@ class AlarmDatabaseHelper(context: Context) :
             put(AlarmContract.AlarmEntry.COLUMN_LABEL, alarm.label)
             put(AlarmContract.AlarmEntry.COLUMN_SOUND, alarm.sound)
             put(AlarmContract.AlarmEntry.COLUMN_ENABLED, if (alarm.enabled) 1 else 0) // Store enabled state as 1 (true) or 0 (false)
+            put(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE, alarm.challengeType)
         }
 
         // Update the alarm in the database
@@ -74,12 +76,13 @@ class AlarmDatabaseHelper(context: Context) :
                 val label = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_LABEL))
                 val sound = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_SOUND))
                 val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_ENABLED)) == 1
+                val challengeType = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE))
 
                 // Convert daysString to a List<Boolean>
                 val days = Alarm.daysFromString(daysString)
 
                 // Create and add the alarm to our list
-                alarms.add(Alarm(id, hour, minute, days, label, sound, enabled))
+                alarms.add(Alarm(id, hour, minute, days, label, sound, enabled, challengeType))
             } while (cursor.moveToNext())
         }
 
@@ -109,10 +112,12 @@ class AlarmDatabaseHelper(context: Context) :
             val label = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_LABEL))
             val sound = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_SOUND))
             val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_ENABLED)) == 1
+            val challengeType = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE))
+
 
             val days = Alarm.daysFromString(daysString)
 
-            Alarm(id, hour, minute, days, label, sound, enabled)
+            Alarm(id, hour, minute, days, label, sound, enabled, challengeType)
         } else {
             null
         }.also { cursor.close() }

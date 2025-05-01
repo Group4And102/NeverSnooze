@@ -21,8 +21,8 @@ class ShakingActivity : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        setContentView(R.layout.activity_shaking)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.shakeText)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -85,11 +85,25 @@ class ShakingActivity : AppCompatActivity(), SensorEventListener {
                     v.vibrate(500)
                 }
 
-                Toast.makeText(applicationContext, "Shock", Toast.LENGTH_LONG).show() // This is what it does
-
-                shakeCount = 0 // Reset after triggering
+                runOnUiThread {
+                    showChallengeDialog()
+                }
+                sensorManager!!.unregisterListener(this) // prevent more shakes while dialog is open
             }
         }
+    }
+
+    private fun showChallengeDialog() {
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Challenge Achieved")
+            .setMessage("You successfully completed the shaking challenge.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { _, _ ->
+                finish() // Close this activity
+            }
+            .create()
+
+        dialog.show()
     }
 
 

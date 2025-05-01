@@ -11,8 +11,9 @@ data class Alarm (
     val days: List<Boolean>, // 7 days rep = 7 days of the week
     val label: String,
     val sound: String,
-    val enabled: Boolean
-    ) {
+    val enabled: Boolean,
+    val challengeType: String
+) {
     /**
      * Covert the days list to a string format for storage
      */

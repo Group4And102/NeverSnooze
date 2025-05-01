@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //deleteDatabase("Alarms.db") // ⚠️ Only for one-time reset
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
@@ -89,7 +90,8 @@ class MainActivity : AppCompatActivity() {
             AlarmContract.AlarmEntry.COLUMN_DAYS,
             AlarmContract.AlarmEntry.COLUMN_LABEL,
             AlarmContract.AlarmEntry.COLUMN_SOUND,
-            AlarmContract.AlarmEntry.COLUMN_ENABLED
+            AlarmContract.AlarmEntry.COLUMN_ENABLED,
+            AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE
         )
 
         val sortOrder = "${AlarmContract.AlarmEntry.COLUMN_HOUR} ASC, ${AlarmContract.AlarmEntry.COLUMN_MINUTE} ASC"
@@ -118,7 +120,8 @@ class MainActivity : AppCompatActivity() {
                     days = Alarm.daysFromString(daysString),
                     label = label,
                     sound = sound,
-                    enabled = enabled
+                    enabled = enabled,
+                    challengeType = cursor.getString(cursor.getColumnIndexOrThrow(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE))
                 )
 
                 alarms.add(alarm)
