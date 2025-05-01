@@ -38,6 +38,12 @@ class AlarmCreateActivity : AppCompatActivity() {
         val alarmLabel = findViewById<EditText>(R.id.alarmLabel)
         val soundText = findViewById<TextView>(R.id.selectSound)
         val createButton = findViewById<MaterialButton>(R.id.createAlarmButton)
+        val cancelButton = findViewById<TextView>(R.id.cancelButton)
+
+        // Set up cancel button click listener
+        cancelButton.setOnClickListener {
+            finish() // This will close the current activity and return to the previous one (MainActivity)
+        }
 
         // Initialize day buttons and set click listeners
         initDayButtons()

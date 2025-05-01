@@ -117,13 +117,7 @@ class AlarmService : Service() {
     }
 
     private fun createNotification(hour: Int, minute: Int, label: String): Notification {
-        val challengeTypes = listOf(
-            ButtonChallengeActivity::class.java,
-            MathActivity::class.java
-        )
-        val selectedChallenge = challengeTypes[currentChallengeIndex]
-
-        val notificationIntent = Intent(this, selectedChallenge).apply {
+        val notificationIntent = Intent(this, ButtonChallengeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("ALARM_ID", alarmId)
             putExtra("ALARM_HOUR", hour)
@@ -140,12 +134,11 @@ class AlarmService : Service() {
 
         val formattedTime = String.format("%02d:%02d", hour, minute)
         val title = if (label.isNotEmpty()) label else "Alarm"
-        val challengeType = if (selectedChallenge == ButtonChallengeActivity::class.java) "Button Press" else "Math"
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
-            .setContentText("$formattedTime - Complete $challengeType challenge to stop alarm")
-            .setSmallIcon(R.drawable.ic_notification_alarm)
+            .setContentText("$formattedTime - Complete challenge to stop alarm")
+            .setSmallIcon(R.drawable.ic_notification_alarm) // Make sure you have this resource
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pendingIntent, true)
