@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">NeverSnooze</string>
+
+    <string-array name="challenge_options">
+        <item>Tap Button</item>
+        <item>Math</item>
+        <item>Shaking</item>
+        <item>Object Detection</item>
+    </string-array>
+
 </resources>

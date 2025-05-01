@@ -67,24 +67,24 @@ class AlarmService : Service() {
         val minute = intent?.getIntExtra("ALARM_MINUTE", 0) ?: 0
         val label = intent?.getStringExtra("ALARM_LABEL") ?: ""
         val sound = intent?.getStringExtra("ALARM_SOUND") ?: "default_alarm"
+        val challengeType = intent?.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button" // ✅ ADD THIS LINE
+
+        Log.d(TAG, "Received challengeType in AlarmService: $challengeType")
 
         // Create notification
-        val notification = createNotification(hour, minute, label)
+        val notification = createNotification(hour, minute, label, intent)
         startForeground(NOTIFICATION_ID, notification)
 
         // Play alarm sound
         playAlarmSound(sound)
 
-        // Cycle through challenges in order
-        val challengeTypes = listOf(
-            ButtonChallengeActivity::class.java,
-            MathActivity::class.java
-            // Add other challenge types here when implemented
-        )
-
-        // Get the next challenge type
-        val selectedChallenge = challengeTypes[currentChallengeIndex]
-        currentChallengeIndex = (currentChallengeIndex + 1) % challengeTypes.size
+        // Choose Challenge
+        val selectedChallenge = when (challengeType) {
+            "Math" -> MathActivity::class.java
+            "Shaking" -> ShakingActivity::class.java
+            "ObjectDetection" -> ObjectDetection::class.java
+            else -> ButtonChallengeActivity::class.java
+        }
 
         // Create and show the selected challenge activity
         val challengeIntent = Intent(this, selectedChallenge).apply {
@@ -94,13 +94,13 @@ class AlarmService : Service() {
             putExtra("ALARM_MINUTE", minute)
             putExtra("ALARM_LABEL", label)
             putExtra("ALARM_SOUND", sound)
+            putExtra("ALARM_CHALLENGE_TYPE", challengeType) // ✅ FIXED: reference the correct variable
         }
 
         startActivity(challengeIntent)
-
-        // Return a value indicating how the system should handle service restarts
         return START_STICKY
     }
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -116,12 +116,16 @@ class AlarmService : Service() {
         }
     }
 
-    private fun createNotification(hour: Int, minute: Int, label: String): Notification {
-        val challengeTypes = listOf(
-            ButtonChallengeActivity::class.java,
-            MathActivity::class.java
-        )
-        val selectedChallenge = challengeTypes[currentChallengeIndex]
+    private fun createNotification(hour: Int, minute: Int, label: String, intent: Intent?): Notification {
+
+        val challengeType = intent?.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button"
+
+        val selectedChallenge = when (challengeType) {
+            "Math" -> MathActivity::class.java
+            "Shaking" -> ShakingActivity::class.java
+            "ObjectDetection" -> ObjectDetection::class.java
+            else -> ButtonChallengeActivity::class.java
+        }
 
         val notificationIntent = Intent(this, selectedChallenge).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -140,11 +144,17 @@ class AlarmService : Service() {
 
         val formattedTime = String.format("%02d:%02d", hour, minute)
         val title = if (label.isNotEmpty()) label else "Alarm"
-        val challengeType = if (selectedChallenge == ButtonChallengeActivity::class.java) "Button Press" else "Math"
+        val challengeLabel = when (challengeType) {
+            "Math" -> "Math"
+            "Shaking" -> "Shake"
+            "ObjectDetection" -> "Object Detection"
+            else -> "Button Press"
+        }
+
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
-            .setContentText("$formattedTime - Complete $challengeType challenge to stop alarm")
+            .setContentText("$formattedTime - Complete $challengeLabel challenge to stop alarm")
             .setSmallIcon(R.drawable.ic_notification_alarm)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)

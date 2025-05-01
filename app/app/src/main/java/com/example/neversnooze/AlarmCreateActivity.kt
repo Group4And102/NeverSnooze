@@ -8,6 +8,7 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
+import android.widget.Spinner
 
 class AlarmCreateActivity : AppCompatActivity() {
 
@@ -29,6 +30,8 @@ class AlarmCreateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.alarm_create)
+
+        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner) //check later
 
         // Initialize database helper
         dbHelper = AlarmDatabaseHelper(this)
@@ -115,6 +118,9 @@ class AlarmCreateActivity : AppCompatActivity() {
             return
         }
 
+        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
+        val challenge = activitySpinner.selectedItem.toString()
+
         // Create values for database insertion
         val values = ContentValues().apply {
             put(AlarmContract.AlarmEntry.COLUMN_HOUR, hour)
@@ -123,6 +129,7 @@ class AlarmCreateActivity : AppCompatActivity() {
             put(AlarmContract.AlarmEntry.COLUMN_LABEL, label)
             put(AlarmContract.AlarmEntry.COLUMN_SOUND, sound)
             put(AlarmContract.AlarmEntry.COLUMN_ENABLED, 1) // 1 = enabled by default
+            put(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE, challenge) // save selected challenge
         }
 
         // Insert into database
