@@ -38,6 +38,8 @@ class ButtonChallengeActivity : AppCompatActivity() {
             
             if (pressCount >= 10) {
                 // Challenge completed, snooze the alarm
+                val stopIntent = Intent(this, AlarmService::class.java)
+                stopService(stopIntent)
                 if (canScheduleExactAlarms()) {
                     snoozeAlarm()
                 } else {
