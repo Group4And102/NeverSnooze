@@ -133,7 +133,7 @@
                 android:id="@+id/selectSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Radar"
+                android:text="Chimes"
                 android:textColor="#FFFFFF"
                 android:clickable="true"
                 android:focusable="true"

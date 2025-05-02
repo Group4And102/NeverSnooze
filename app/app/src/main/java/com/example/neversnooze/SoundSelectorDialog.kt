@@ -19,17 +19,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  */
 class SoundSelectorDialog : BottomSheetDialogFragment() {
 
-    private var soundSelectedListener: ((String) -> Unit)? = null
+    private var soundSelectedListener: ((Pair<String, String>) -> Unit)? = null
     private var mediaPlayer: MediaPlayer? = null
 
-    // Sample sound options
     private val soundOptions = listOf(
-        "Radar", "Chimes", "Ripples")
+        SoundOption("Chimes", "chimes"),
+        SoundOption("Over The Horizon", "over_the_horizon"),
+        SoundOption("Never Ending Quest", "never_ending_quest")
+    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,43 +41,35 @@ class SoundSelectorDialog : BottomSheetDialogFragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.soundRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = SoundAdapter(soundOptions) { soundName ->
-            // Play sound preview
-            playSoundPreview(soundName)
 
-            // Invoke callback with the selected sound
-            soundSelectedListener?.invoke(soundName)
-
-            // Dismiss dialog
+        recyclerView.adapter = SoundAdapter(soundOptions) { soundOption ->
+            playSoundPreview(soundOption.fileName)
+            soundSelectedListener?.invoke(soundOption.label to soundOption.fileName)
             dismiss()
         }
 
         val titleView = view.findViewById<TextView>(R.id.titleText)
-        titleView.text = "Select Sound"
+        titleView.text = getString(R.string.select_sound)
 
         return view
     }
 
-    private fun playSoundPreview(soundName: String) {
-        // In a real app, you would play the actual sound file
-        // For this example, we'll just use a default sound
-
-        // Release previous MediaPlayer if any
+    private fun playSoundPreview(fileName: String) {
         mediaPlayer?.release()
-
-        // Create new MediaPlayer
-        mediaPlayer = MediaPlayer.create(context, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI)
-        mediaPlayer?.start()
+        val resId = resources.getIdentifier(fileName, "raw", requireContext().packageName)
+        if (resId != 0) {
+            mediaPlayer = MediaPlayer.create(context, resId)
+            mediaPlayer?.start()
+        }
     }
 
     override fun onDestroy() {
-        // Release MediaPlayer resources
         mediaPlayer?.release()
         mediaPlayer = null
         super.onDestroy()
     }
 
-    fun setOnSoundSelectedListener(listener: (String) -> Unit) {
+    fun setOnSoundSelectedListener(listener: (Pair<String, String>) -> Unit) {
         soundSelectedListener = listener
     }
 
@@ -84,8 +77,8 @@ class SoundSelectorDialog : BottomSheetDialogFragment() {
      * Adapter for displaying sound options
      */
     private inner class SoundAdapter(
-        private val sounds: List<String>,
-        private val onSoundSelected: (String) -> Unit
+        private val sounds: List<SoundOption>,
+        private val onSoundSelected: (SoundOption) -> Unit
     ) : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
         inner class SoundViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -100,7 +93,7 @@ class SoundSelectorDialog : BottomSheetDialogFragment() {
 
         override fun onBindViewHolder(holder: SoundViewHolder, position: Int) {
             val sound = sounds[position]
-            holder.radioButton.text = sound
+            holder.radioButton.text = sound.label
 
             holder.itemView.setOnClickListener {
                 onSoundSelected(sound)
@@ -113,6 +106,8 @@ class SoundSelectorDialog : BottomSheetDialogFragment() {
 
         override fun getItemCount() = sounds.size
     }
+
+    data class SoundOption(val label: String, val fileName: String)
 
     companion object {
         fun newInstance(): SoundSelectorDialog {
