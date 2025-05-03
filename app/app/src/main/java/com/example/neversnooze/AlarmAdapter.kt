@@ -15,6 +15,12 @@ class AlarmAdapter(
 ) : RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
 
     private var isDeleteMode = false
+    private var isDarkTheme = true
+
+    fun updateTheme(isDark: Boolean) {
+        isDarkTheme = isDark
+        notifyDataSetChanged()
+    }
 
     class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val timeText: TextView = itemView.findViewById(R.id.timeText)
@@ -32,6 +38,7 @@ class AlarmAdapter(
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val alarm = alarms[position]
+        val context = holder.itemView.context
 
         // Set the time
         holder.timeText.text = alarm.getFormattedTime()
@@ -45,6 +52,24 @@ class AlarmAdapter(
             holder.labelText.text = alarm.label
         } else {
             holder.labelText.visibility = View.GONE
+        }
+
+        if (isDarkTheme) {
+            // DARK MODE: Use dark theme colors
+            holder.timeText.setTextColor(context.getColor(R.color.white))
+            holder.daysText.setTextColor(context.getColor(R.color.white))
+            holder.labelText.setTextColor(context.getColor(R.color.white))
+            holder.itemView.setBackgroundColor(context.getColor(R.color.card_background))
+            holder.enableSwitch.thumbTintList = null
+            holder.enableSwitch.trackTintList = null
+        } else {
+            // LIGHT MODE: Use light theme colors
+            holder.timeText.setTextColor(context.getColor(android.R.color.black))
+            holder.daysText.setTextColor(context.getColor(android.R.color.black))
+            holder.labelText.setTextColor(context.getColor(android.R.color.black))
+            holder.itemView.setBackgroundColor(context.getColor(R.color.surface))
+            holder.enableSwitch.thumbTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
+            holder.enableSwitch.trackTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
         }
 
         // Set the enabled status

@@ -2,11 +2,13 @@ package com.example.neversnooze
 
 import android.content.ContentValues
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 
 class AlarmCreateActivity : AppCompatActivity() {
@@ -30,11 +32,28 @@ class AlarmCreateActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.alarm_create)
 
+        // Set background color based on theme
+        val rootLayout = findViewById<View>(R.id.main)
+        val isDarkTheme = getSharedPreferences("app_preferences", MODE_PRIVATE)
+            .getBoolean("dark_theme", true)
+        if (isDarkTheme) {
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background_dark))
+        } else {
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background))
+        }
+
         // Initialize database helper
         dbHelper = AlarmDatabaseHelper(this)
 
         // Initialize views
         val timePicker = findViewById<TimePicker>(R.id.timePicker)
+        if (isDarkTheme) {
+            // Optionally, set dark style if needed (default may be fine)
+        } else {
+            // For light mode, set a light style if needed
+            // You may need to use AppCompatDelegate or set a style programmatically if you want a custom look
+            // But most devices will use the system's default light TimePicker
+        }
         val alarmLabel = findViewById<EditText>(R.id.alarmLabel)
         val soundText = findViewById<TextView>(R.id.selectSound)
         val createButton = findViewById<MaterialButton>(R.id.createAlarmButton)

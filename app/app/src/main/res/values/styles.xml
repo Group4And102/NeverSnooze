@@ -80,4 +80,10 @@
         <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="TimePickerCustom" parent="Widget.MaterialComponents.TimePicker">
+        <item name="android:textColorPrimary">#232946</item> <!-- Dark blue for numbers -->
+        <item name="android:textColorSecondary">#7F5AF0</item> <!-- Accent for AM/PM etc. -->
+        <item name="android:background">#FFF8F0</item> <!-- Off-white background -->
+    </style>
+
 </resources>

@@ -18,23 +18,52 @@ import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
 
-    private var isDarkTheme = true // Starting with dark theme as default since navy_blue is already used
+    private var isDarkTheme = true
     private lateinit var recyclerView: RecyclerView
     private lateinit var alarmAdapter: AlarmAdapter
     private lateinit var dbHelper: AlarmDatabaseHelper
     private lateinit var trashButton: AppCompatImageButton
+    private lateinit var themeButton: AppCompatImageButton
+    private lateinit var rootLayout: ConstraintLayout
+    private lateinit var alarmContainer: ConstraintLayout
+    private lateinit var buttonBar: LinearLayout
+    private lateinit var titleText: AppCompatTextView
     private var isDeleteMode = false
 
-    @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        dbHelper = AlarmDatabaseHelper(this)
+        // Initialize views
+        initializeViews()
 
-        recyclerView = findViewById(R.id.alarmRecyclerView)
+        // Set up RecyclerView
+        setupRecyclerView()
+
+        // Load theme preference
+        val sharedPrefs = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        isDarkTheme = sharedPrefs.getBoolean("dark_theme", true)
+
+        // Apply initial theme
+        updateThemeUI()
+
+        // Set up click listeners
+        setupClickListeners(sharedPrefs)
+    }
+
+    private fun initializeViews() {
+        rootLayout = findViewById(R.id.rootLayout)
+        alarmContainer = findViewById(R.id.alarmContainer)
+        buttonBar = findViewById(R.id.buttonBar)
+        titleText = findViewById(R.id.titleText)
+        themeButton = findViewById(R.id.themeToggleButton)
         trashButton = findViewById(R.id.trashButton)
+        recyclerView = findViewById(R.id.alarmRecyclerView)
+        dbHelper = AlarmDatabaseHelper(this)
+    }
+
+    private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         alarmAdapter = AlarmAdapter(emptyList()) { alarm ->
             if (isDeleteMode) {
@@ -42,21 +71,60 @@ class MainActivity : AppCompatActivity() {
             }
         }
         recyclerView.adapter = alarmAdapter
+    }
 
-        val sharedPrefs = getSharedPreferences("app_preferences", MODE_PRIVATE)
-        isDarkTheme = sharedPrefs.getBoolean("dark_theme", true)
+    private fun setupClickListeners(sharedPrefs: android.content.SharedPreferences) {
+        // Theme toggle button
+        themeButton.setOnClickListener {
+            isDarkTheme = !isDarkTheme
+            sharedPrefs.edit().putBoolean("dark_theme", isDarkTheme).apply()
+            updateThemeUI()
+        }
 
-        applyTheme(isDarkTheme)
-
-        val addButton = findViewById<AppCompatImageButton>(R.id.addButton)
-        addButton.setOnClickListener {
+        // Add button
+        findViewById<AppCompatImageButton>(R.id.addButton).setOnClickListener {
             val intent = Intent(this, AlarmCreateActivity::class.java)
             startActivity(intent)
         }
 
+        // Trash button
         trashButton.setOnClickListener {
             toggleDeleteMode()
         }
+    }
+
+    private fun updateThemeUI() {
+        // Update theme button icon
+        themeButton.setImageResource(
+            if (isDarkTheme) R.drawable.baseline_dark_mode_24
+            else R.drawable.baseline_sunny_24
+        )
+
+        // Update colors
+        if (isDarkTheme) {
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.navy_blue))
+            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.navy_blue))
+            buttonBar.setBackgroundColor(ContextCompat.getColor(this, R.color.card_background))
+            titleText.setTextColor(ContextCompat.getColor(this, R.color.white))
+
+            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.white))
+            themeButton.imageTintList = buttonTint
+            findViewById<AppCompatImageButton>(R.id.addButton).imageTintList = buttonTint
+            trashButton.imageTintList = buttonTint
+        } else {
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.background))
+            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.background))
+            buttonBar.setBackgroundColor(ContextCompat.getColor(this, R.color.surface))
+            titleText.setTextColor(ContextCompat.getColor(this, R.color.navy_blue))
+
+            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.button_color))
+            themeButton.imageTintList = buttonTint
+            findViewById<AppCompatImageButton>(R.id.addButton).imageTintList = buttonTint
+            trashButton.imageTintList = buttonTint
+        }
+
+        // Update adapter theme
+        alarmAdapter.updateTheme(isDarkTheme)
     }
 
     override fun onResume() {
@@ -147,39 +215,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    @SuppressLint("WrongViewCast")
-    private fun applyTheme(isDark: Boolean) {
-        val rootLayout = findViewById<ConstraintLayout>(R.id.rootLayout)
-        val alarmContainer = findViewById<ConstraintLayout>(R.id.alarmContainer)
-        val buttonBar = findViewById<LinearLayout>(R.id.buttonBar)
-        val titleText = findViewById<AppCompatTextView>(R.id.titleText)
-        val themeToggleButton = findViewById<AppCompatImageButton>(R.id.themeToggleButton)
-        val addButton = findViewById<AppCompatImageButton>(R.id.addButton)
-        val trashButton = findViewById<AppCompatImageButton>(R.id.trashButton)
-
-        if (isDark) {
-            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.navy_blue))
-            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.navy_blue))
-            titleText.setTextColor(ContextCompat.getColor(this, android.R.color.white))
-            themeToggleButton.setImageResource(R.drawable.baseline_dark_mode_24)
-
-            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.white))
-            addButton.imageTintList = buttonTint
-            trashButton.imageTintList = buttonTint
-            themeToggleButton.imageTintList = buttonTint
-        } else {
-            rootLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
-            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
-            titleText.setTextColor(ContextCompat.getColor(this, R.color.navy_blue))
-            themeToggleButton.setImageResource(R.drawable.baseline_sunny_24)
-
-            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.navy_blue))
-            addButton.imageTintList = buttonTint
-            trashButton.imageTintList = buttonTint
-            themeToggleButton.imageTintList = buttonTint
-        }
-    }
-
     private fun toggleDeleteMode() {
         isDeleteMode = !isDeleteMode
         alarmAdapter.setDeleteMode(isDeleteMode)
@@ -188,7 +223,10 @@ class MainActivity : AppCompatActivity() {
         if (isDeleteMode) {
             trashButton.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_red_light))
         } else {
-            trashButton.setColorFilter(ContextCompat.getColor(this, android.R.color.white))
+            trashButton.setColorFilter(
+                if (isDarkTheme) ContextCompat.getColor(this, android.R.color.white)
+                else ContextCompat.getColor(this, R.color.navy_blue)
+            )
         }
     }
 
