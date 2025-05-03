@@ -34,7 +34,9 @@
 
         <activity
             android:name=".CongratulationsActivity"
-            android:exported="false"/>
+            android:exported="false"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar"/>
+
         <receiver android:name=".alarmscheduler.AlarmReceiver"/>
 
         <activity
@@ -94,6 +96,19 @@
 
         <activity
             android:name=".ShakingActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar" />
+
+        <activity android:name=".ObjectDetection"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar" />
+
+        <activity
+            android:name=".ObjectPromptActivity"
             android:exported="false"
             android:showWhenLocked="true"
             android:turnScreenOn="true"

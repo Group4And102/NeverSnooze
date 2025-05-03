@@ -22,6 +22,7 @@ class AlarmAdapter(
         val labelText: TextView = itemView.findViewById(R.id.labelText)
         val enableSwitch: Switch = itemView.findViewById(R.id.enableSwitch)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+        val challengeText: TextView = itemView.findViewById(R.id.challengeText)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
@@ -46,6 +47,8 @@ class AlarmAdapter(
         } else {
             holder.labelText.visibility = View.GONE
         }
+
+        holder.challengeText.text = "Challenge: ${alarm.challengeType}"
 
         // Set the enabled status
         holder.enableSwitch.isChecked = alarm.enabled

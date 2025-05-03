@@ -79,10 +79,11 @@ class AlarmService : Service() {
         playAlarmSound(sound)
 
         // Choose Challenge
-        val selectedChallenge = when (challengeType) {
+        val normalizedChallenge = challengeType.trim().replace(" ", "")
+        val selectedChallenge = when (normalizedChallenge) {
             "Math" -> MathActivity::class.java
             "Shaking" -> ShakingActivity::class.java
-            "ObjectDetection" -> ObjectDetection::class.java
+            "ObjectDetection" -> ObjectPromptActivity::class.java
             else -> ButtonChallengeActivity::class.java
         }
 

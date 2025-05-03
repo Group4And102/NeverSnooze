@@ -32,7 +32,8 @@ import org.tensorflow.lite.support.image.ops.ResizeOp
 import android.widget.TextView
 import android.content.Intent
 
-private val targetObjects = listOf("chair", "toilet", "sink", "laptop", "keyboard", "refrigerator")
+//private val targetObjects = listOf("chair", "toilet", "sink", "laptop", "keyboard", "refrigerator")
+//private val targetObjects = listOf("chair", "laptop", "keyboard", "tv", "mouse", "cell phone")
 private lateinit var targetLabel: String
 private var detected = false
 
@@ -67,7 +68,8 @@ class ObjectDetection : AppCompatActivity() {
 
         labels = FileUtil.loadLabels(this, "labels.txt")
 
-        targetLabel = targetObjects.random() // Pick random target
+        //targetLabel = targetObjects.random() // Pick random target
+        targetLabel = intent.getStringExtra("TARGET_OBJECT") ?: "chair" // ✅ Default fallback
         val promptText = findViewById<TextView>(R.id.promptText)
         promptText.text = "Find a $targetLabel!"
 
@@ -128,7 +130,7 @@ class ObjectDetection : AppCompatActivity() {
                 scores.forEachIndexed{index, fl ->
                     x = index
                     x *= 4
-                    if(fl > 0.5){
+                    if(fl > 0.7){
                         paint.setColor(colors.get(index))
                         paint.style = Paint.Style.STROKE
                         canvas.drawRect(RectF(locations.get(x+1)*w, locations.get(x)*h, locations.get(x+3)*w, locations.get(x+2)*h), paint)
@@ -146,6 +148,7 @@ class ObjectDetection : AppCompatActivity() {
                             startActivity(intent)
                             finish() // closes camera screen
                         }
+
 
                     }
                 }
