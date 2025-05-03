@@ -9,3 +9,4 @@ app/.idea/
 .gradle/
 build/
 app/build/
+app/.kotlin/

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_500">#AA66CC</color>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
@@ -8,7 +11,6 @@
     <color name="card_background">#262A40</color>
     <color name="purple_500">#6200EE</color>
     <color name="dark_gray">#A9A9A9</color>
-    <color name="white">#FFFFFF</color>
     <color name="secondary">#018786</color>  <!-- Teal 700 -->
     <color name="ripple_white">#66FFFFFF</color>  <!-- White with 40% opacity -->
     <color name="surface">#FFF8F0</color>
@@ -16,4 +18,6 @@
     <color name="secondary_text">#A1A6C8</color>
     <color name="alarm_create_background">#FFF8F0</color>
     <color name="alarm_create_background_dark">#232946</color>
+    <color name="surface">#1E1E1E</color>  <!-- Darker surface for cards/sheets -->
+    <color name="button_color">#2196F3</color>
 </resources>

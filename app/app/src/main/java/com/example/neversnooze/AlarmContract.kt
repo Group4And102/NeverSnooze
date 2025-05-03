@@ -6,6 +6,7 @@ import android.provider.BaseColumns
  * Contract class for defining the database schema
  */
 object AlarmContract {
+
     // Table contents defined as a nested class
     object AlarmEntry : BaseColumns {
         const val TABLE_NAME = "alarms"
@@ -16,6 +17,7 @@ object AlarmContract {
         const val COLUMN_LABEL = "label"
         const val COLUMN_SOUND = "sound"
         const val COLUMN_ENABLED = "enabled"
+        const val COLUMN_CHALLENGE_TYPE = "challengeType"
     }
 
     // SQL statement to create the table
@@ -27,7 +29,8 @@ object AlarmContract {
             ${AlarmEntry.COLUMN_DAYS} TEXT NOT NULL,
             ${AlarmEntry.COLUMN_LABEL} TEXT,
             ${AlarmEntry.COLUMN_SOUND} TEXT NOT NULL,
-            ${AlarmEntry.COLUMN_ENABLED} INTEGER NOT NULL
+            ${AlarmEntry.COLUMN_ENABLED} INTEGER NOT NULL,
+            ${AlarmEntry.COLUMN_CHALLENGE_TYPE} TEXT NOT NULL
         )
     """
 

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
+import android.widget.Spinner
 
 class AlarmCreateActivity : AppCompatActivity() {
 
@@ -28,9 +29,13 @@ class AlarmCreateActivity : AppCompatActivity() {
     // Database helper
     private lateinit var dbHelper: AlarmDatabaseHelper
 
+    private var selectedSoundLabel: String = "Chimes"
+    private var selectedSoundFile: String = "chimes"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.alarm_create)
+
 
         // Set background color based on theme
         val rootLayout = findViewById<View>(R.id.main)
@@ -41,6 +46,9 @@ class AlarmCreateActivity : AppCompatActivity() {
         } else {
             rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background))
         }
+
+        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
+
 
         // Initialize database helper
         dbHelper = AlarmDatabaseHelper(this)
@@ -59,9 +67,11 @@ class AlarmCreateActivity : AppCompatActivity() {
         val createButton = findViewById<MaterialButton>(R.id.createAlarmButton)
         val cancelButton = findViewById<TextView>(R.id.cancelButton)
 
+        soundText.text = selectedSoundLabel
+
         // Set up cancel button click listener
         cancelButton.setOnClickListener {
-            finish() // This will close the current activity and return to the previous one (MainActivity)
+            finish()
         }
 
         // Initialize day buttons and set click listeners
@@ -70,9 +80,13 @@ class AlarmCreateActivity : AppCompatActivity() {
         // Set up sound selection
         soundText.setOnClickListener {
             val soundDialog = SoundSelectorDialog.newInstance()
-            soundDialog.setOnSoundSelectedListener { selectedSound ->
-                soundText.text = selectedSound
+
+            soundDialog.setOnSoundSelectedListener { (label, fileName) ->
+                selectedSoundLabel = label
+                selectedSoundFile = fileName
+                soundText.text = label
             }
+
             soundDialog.show(supportFragmentManager, "SoundSelector")
         }
 
@@ -82,13 +96,12 @@ class AlarmCreateActivity : AppCompatActivity() {
                 hour = timePicker.hour,
                 minute = timePicker.minute,
                 label = alarmLabel.text.toString(),
-                sound = soundText.text.toString()
+                sound = selectedSoundFile
             )
         }
     }
 
     private fun initDayButtons() {
-        // Initialize buttons
         btnSun = findViewById(R.id.btnSun)
         btnMon = findViewById(R.id.btnMon)
         btnTue = findViewById(R.id.btnTue)
@@ -97,7 +110,6 @@ class AlarmCreateActivity : AppCompatActivity() {
         btnFri = findViewById(R.id.btnFri)
         btnSat = findViewById(R.id.btnSat)
 
-        // Set up click listeners for day buttons
         setupDayButtonListener(btnSun, 0)
         setupDayButtonListener(btnMon, 1)
         setupDayButtonListener(btnTue, 2)
@@ -109,63 +121,51 @@ class AlarmCreateActivity : AppCompatActivity() {
 
     private fun setupDayButtonListener(button: MaterialButton, dayIndex: Int) {
         button.setOnClickListener {
-            // Toggle selection
             selectedDays[dayIndex] = !selectedDays[dayIndex]
-
-            // Update visual appearance
             updateButtonAppearance(button, selectedDays[dayIndex])
         }
     }
 
     private fun updateButtonAppearance(button: MaterialButton, isSelected: Boolean) {
         if (isSelected) {
-            // Selected state
             button.alpha = 1.0f
             button.backgroundTintList = getColorStateList(R.color.purple_500)
         } else {
-            // Unselected state
             button.alpha = 0.7f
             button.backgroundTintList = getColorStateList(R.color.dark_gray)
         }
     }
 
     private fun saveAlarm(hour: Int, minute: Int, label: String, sound: String) {
-        // Convert selected days to a string format for storage
-        // Format: "1,0,1,0,1,0,1" (1=selected, 0=not selected)
         val daysString = selectedDays.joinToString(",") { if (it) "1" else "0" }
 
-        // Validate inputs
         if (!isValidAlarm(daysString)) {
             Toast.makeText(this, "Please select at least one day", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Create values for database insertion
+        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
+        val challenge = activitySpinner.selectedItem.toString()
+
         val values = ContentValues().apply {
             put(AlarmContract.AlarmEntry.COLUMN_HOUR, hour)
             put(AlarmContract.AlarmEntry.COLUMN_MINUTE, minute)
             put(AlarmContract.AlarmEntry.COLUMN_DAYS, daysString)
             put(AlarmContract.AlarmEntry.COLUMN_LABEL, label)
             put(AlarmContract.AlarmEntry.COLUMN_SOUND, sound)
-            put(AlarmContract.AlarmEntry.COLUMN_ENABLED, 1) // 1 = enabled by default
+            put(AlarmContract.AlarmEntry.COLUMN_ENABLED, 1)
+            put(AlarmContract.AlarmEntry.COLUMN_CHALLENGE_TYPE, challenge)
         }
 
-        // Insert into database
         val db = dbHelper.writableDatabase
         val newRowId = db.insert(AlarmContract.AlarmEntry.TABLE_NAME, null, values)
 
         if (newRowId != -1L) {
             Toast.makeText(this, "Alarm created successfully", Toast.LENGTH_SHORT).show()
-
-            // After saving to the database, get the saved alarm with its ID
             val savedAlarm = dbHelper.getAlarmById(newRowId)
-
-            // Schedule the alarm with the system
             if (savedAlarm != null) {
                 AlarmScheduler.scheduleAlarm(this, savedAlarm)
             }
-
-            // Close this activity and return to the main activity
             finish()
         } else {
             Toast.makeText(this, "Error creating alarm", Toast.LENGTH_SHORT).show()
@@ -173,7 +173,6 @@ class AlarmCreateActivity : AppCompatActivity() {
     }
 
     private fun isValidAlarm(daysString: String): Boolean {
-        // Check if at least one day is selected
         return daysString.contains("1")
     }
 

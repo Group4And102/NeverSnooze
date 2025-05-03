@@ -132,7 +132,7 @@
                 android:id="@+id/selectSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Radar"
+                android:text="Chimes"
                 android:textColor="#FFFFFF"
                 android:clickable="true"
                 android:focusable="true"
@@ -142,7 +142,7 @@
                 android:textSize="15dp"/>
         </LinearLayout>
 
-        <!-- Row 3: Activity -->
+        <!-- Row 3: Activity Selection -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -155,15 +155,18 @@
                 android:layout_weight="1"
                 android:text="Activity"
                 android:textColor="#FFFFFF"
-                android:textSize="15dp"/>
+                android:textSize="15dp" />
 
-            <TextView
+            <Spinner
+                android:id="@+id/activitySpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose one"
-                android:textColor="#FFFFFF"
-                android:textSize="15dp" />
+                android:spinnerMode="dropdown"
+                android:entries="@array/challenge_options"
+                android:backgroundTint="#FFFFFF"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark" />
         </LinearLayout>
+
     </LinearLayout>
 
     <!-- Create Alarm Button -->

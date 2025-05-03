@@ -30,8 +30,12 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarmMinute = intent.getIntExtra("ALARM_MINUTE", 0)
         val alarmLabel = intent.getStringExtra("ALARM_LABEL") ?: ""
         val alarmSound = intent.getStringExtra("ALARM_SOUND") ?: "default_alarm"
+        val dbHelper = AlarmDatabaseHelper(context)
+        val alarm = dbHelper.getAlarmById(alarmId)
+        val alarmChallengeType = alarm?.challengeType ?: "Button"
 
-        Log.d(TAG, "Alarm details: ID=$alarmId, Time=$alarmHour:$alarmMinute, Label=$alarmLabel, Sound=$alarmSound")
+
+        Log.d(TAG, "Alarm details: ID=$alarmId, Time=$alarmHour:$alarmMinute, Label=$alarmLabel, Sound=$alarmSound, Challenge=$alarmChallengeType")
 
         // Launch the alarm ringing activity
         val ringingIntent = Intent(context, AlarmRingingActivity::class.java).apply {
@@ -41,6 +45,7 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra("ALARM_MINUTE", alarmMinute)
             putExtra("ALARM_LABEL", alarmLabel)
             putExtra("ALARM_SOUND", alarmSound)
+            putExtra("ALARM_CHALLENGE_TYPE", alarmChallengeType) // (use actual variable)
         }
         context.startActivity(ringingIntent)
 
@@ -51,6 +56,7 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra("ALARM_MINUTE", alarmMinute)
             putExtra("ALARM_LABEL", alarmLabel)
             putExtra("ALARM_SOUND", alarmSound)
+            putExtra("ALARM_CHALLENGE_TYPE", alarmChallengeType) // (use actual variable)
         }
 
         // Starting the service based on Android version

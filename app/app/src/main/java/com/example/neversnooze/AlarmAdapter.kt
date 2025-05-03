@@ -28,6 +28,7 @@ class AlarmAdapter(
         val labelText: TextView = itemView.findViewById(R.id.labelText)
         val enableSwitch: Switch = itemView.findViewById(R.id.enableSwitch)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+        val challengeText: TextView = itemView.findViewById(R.id.challengeText)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
@@ -54,6 +55,7 @@ class AlarmAdapter(
             holder.labelText.visibility = View.GONE
         }
 
+
         if (isDarkTheme) {
             // DARK MODE: Use dark theme colors
             holder.timeText.setTextColor(context.getColor(R.color.white))
@@ -71,6 +73,9 @@ class AlarmAdapter(
             holder.enableSwitch.thumbTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
             holder.enableSwitch.trackTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
         }
+
+        holder.challengeText.text = "Challenge: ${alarm.challengeType}"
+
 
         // Set the enabled status
         holder.enableSwitch.isChecked = alarm.enabled
