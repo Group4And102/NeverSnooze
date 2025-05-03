@@ -69,7 +69,7 @@
                 android:layout_height="96dp"
                 android:src="@drawable/baseline_add_24"
                 android:contentDescription="No alarms icon"
-                android:tint="@android:color/white" />
+                app:tint="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -103,31 +103,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageButton
+        <!-- Bottom button bar buttons -->
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/themeToggleButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_sunny_24"
-            android:tint="@android:color/white" />
+            android:src="@drawable/baseline_dark_mode_24"
+            app:tint="@android:color/white" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/addButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_add_24"
-            android:tint="@android:color/white" />
+            app:tint="@android:color/white" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/trashButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_delete_24"
-            android:tint="@android:color/white" />
+            app:tint="@android:color/white" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -155,8 +155,13 @@ class AlarmService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
+
+            .setContentText("$formattedTime - Complete challenge to stop alarm")
+            .setSmallIcon(R.drawable.ic_notification_alarm) 
+
             .setContentText("$formattedTime - Complete $challengeLabel challenge to stop alarm")
             .setSmallIcon(R.drawable.ic_notification_alarm)
+
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pendingIntent, true)

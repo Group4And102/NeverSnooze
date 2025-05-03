@@ -8,11 +8,11 @@
     <style name="Theme.NeverSnooze" parent="Base.Theme.NeverSnooze" />
 
     <style name="Theme.NeverSnooze.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/navy_blue</item>
-        <item name="colorPrimaryVariant">@color/navy_blue</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="android:windowBackground">@color/navy_blue</item>
-        <item name="android:statusBarColor">@color/navy_blue</item>
-        <item name="android:navigationBarColor">@color/navy_blue</item>
+        <item name="colorPrimary">@color/button_color</item>
+        <item name="colorPrimaryVariant">@color/button_color</item>
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="android:windowBackground">@color/alarm_create_background</item>
+        <item name="android:statusBarColor">@color/alarm_create_background</item>
+        <item name="android:navigationBarColor">@color/alarm_create_background</item>
     </style>
 </resources>
