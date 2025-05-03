@@ -1,25 +1,48 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="32dp"
-    android:background="#ffffff">
+    android:background="@android:color/white"
+    android:gravity="center">
 
+    <!-- Daily Quote -->
+    <TextView
+        android:id="@+id/quoteText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Loading daily quote..."
+        android:textSize="18sp"
+        android:textColor="@color/dark_gray"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Congratulations Message -->
     <TextView
         android:id="@+id/congratsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="🎉 Great job!"
-        android:textSize="28sp"
-        android:textColor="#000"
-        android:layout_centerInParent="true"
-        android:textAlignment="center"/>
+        android:textSize="32sp"
+        android:textColor="#222"
+        android:textAlignment="center"
+        android:layout_marginBottom="24dp"/>
 
+    <!-- Stop Alarm Button -->
     <Button
         android:id="@+id/stopAlarmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Turn Off Alarm"
-        android:layout_below="@id/congratsText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"/>
-</RelativeLayout>
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:elevation="4dp"
+        android:gravity="center"/>
+</LinearLayout>

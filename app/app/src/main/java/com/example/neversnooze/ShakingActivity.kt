@@ -1,6 +1,7 @@
 package com.example.neversnooze
 
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -99,6 +100,8 @@ class ShakingActivity : AppCompatActivity(), SensorEventListener {
             .setMessage("You successfully completed the shaking challenge.")
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
+                val intent = Intent(this, CongratulationsActivity::class.java)
+                startActivity(intent)
                 finish() // Close this activity
             }
             .create()

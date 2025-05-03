@@ -45,6 +45,8 @@ class ButtonChallengeActivity : AppCompatActivity() {
                 } else {
                     requestExactAlarmPermission()
                 }
+                val intent = Intent(this, CongratulationsActivity::class.java)
+                startActivity(intent)
                 finish()
             }
         }
