@@ -9,4 +9,6 @@ app/.idea/
 .gradle/
 build/
 app/build/
-app/.kotlin/
+app/src/main/java/com/example/neversnooze/WeatherConfig.kt
+
+app/src/main/java/com/example/neversnooze/WeatherConfig.kt
