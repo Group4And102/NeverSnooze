@@ -20,10 +20,12 @@ object AlarmScheduler {
      */
     fun scheduleAlarm(context: Context, alarm: Alarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
+        
+        // Cancel any existing alarm to avoid duplication
+        cancelAlarm(context, alarm)
+        
         // If the alarm is not enabled, just cancel any existing alarms
         if (!alarm.enabled) {
-            cancelAlarm(context, alarm)
             return
         }
 
@@ -54,17 +56,16 @@ object AlarmScheduler {
     ) {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
+
+            set(Calendar.DAY_OF_WEEK, dayOfWeek + 1)
+
             set(Calendar.HOUR_OF_DAY, alarm.hour)
             set(Calendar.MINUTE, alarm.minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
-            // Set day of week (Calendar uses 1-7 for Sunday-Saturday, we use 0-6)
-            set(Calendar.DAY_OF_WEEK, dayOfWeek + 1)
-
-            // If the time is in the past, add 7 days
             if (timeInMillis <= System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 7)
+                add(Calendar.WEEK_OF_YEAR, 1)
             }
         }
 
@@ -72,22 +73,12 @@ object AlarmScheduler {
         val intent = createAlarmIntent(context, alarm, requestCode)
 
         Log.d(TAG, "Scheduling repeating alarm for day $dayOfWeek at ${alarm.hour}:${alarm.minute}, time=${calendar.timeInMillis}")
-
-        // Set repeating alarm (every week)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                AlarmManager.INTERVAL_DAY * 7,
-                intent
-            )
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                intent
-            )
-        }
+        
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            intent
+        )
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.neversnooze
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -59,7 +60,9 @@ class MathActivity : AppCompatActivity() {
             currentProblem++
         } else {
             // Challenge completed successfully
-            setResult(RESULT_OK)
+            // setResult(RESULT_OK)
+            val intent = Intent(this, CongratulationsActivity::class.java)
+            startActivity(intent)
             finish()
         }
     }

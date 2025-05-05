@@ -6,4 +6,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/background</item>
     </style>
+
+    <style name="TimePickerCustom" parent="Widget.MaterialComponents.TimePicker">
+        <item name="android:textColorPrimary">#FFF8F0</item> <!-- Off-white for numbers -->
+        <item name="android:textColorSecondary">#7F5AF0</item> <!-- Accent for AM/PM etc. -->
+        <item name="android:background">#232946</item> <!-- Galaxy blue background -->
+    </style>
 </resources>

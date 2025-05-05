@@ -2,15 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -36,8 +42,6 @@
             android:name=".CongratulationsActivity"
             android:exported="false"
             android:theme="@style/Theme.NeverSnooze.NoActionBar"/>
-
-        <receiver android:name=".alarmscheduler.AlarmReceiver"/>
 
         <activity
             android:name=".AlarmCreateActivity"
@@ -68,13 +72,16 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
 
-        <!-- Add this receiver for alarm triggers -->
+        <!-- Merged AlarmReceiver declaration -->
         <receiver
             android:name=".AlarmReceiver"
-            android:exported="false"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.example.neversnooze.ALARM_TRIGGERED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
@@ -83,7 +90,6 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -113,7 +119,19 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.NeverSnooze.NoActionBar" />
-
-
+        <activity
+            android:name=".AlarmLauncherActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+        <activity
+            android:name=".OverlayChallengeActivity"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar"
+            android:exported="false"
+            android:showWhenLocked="false"
+            android:turnScreenOn="false"/>
     </application>
+
 </manifest>
