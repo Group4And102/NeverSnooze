@@ -1,7 +1,5 @@
 package com.example.neversnooze
 
-package com.example.neversnooze
-
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent

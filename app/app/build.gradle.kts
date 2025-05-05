@@ -55,6 +55,7 @@ dependencies {
     // TensorFlow Lite
     implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.metadata)
+    implementation(libs.play.services.location)
 
     // Testing
     testImplementation(libs.junit)
