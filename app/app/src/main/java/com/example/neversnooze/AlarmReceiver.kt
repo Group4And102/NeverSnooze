@@ -17,7 +17,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "AlarmReceiver received intent with action: ${intent.action}")
-        
+
         if (intent.action != "com.example.neversnooze.ALARM_TRIGGERED") {
             Log.w(TAG, "Received intent with unexpected action: ${intent.action}")
             return
@@ -36,18 +36,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
 
         Log.d(TAG, "Alarm details: ID=$alarmId, Time=$alarmHour:$alarmMinute, Label=$alarmLabel, Sound=$alarmSound, Challenge=$alarmChallengeType")
-
-        // Launch the alarm ringing activity
-        val ringingIntent = Intent(context, AlarmRingingActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("ALARM_ID", alarmId)
-            putExtra("ALARM_HOUR", alarmHour)
-            putExtra("ALARM_MINUTE", alarmMinute)
-            putExtra("ALARM_LABEL", alarmLabel)
-            putExtra("ALARM_SOUND", alarmSound)
-            putExtra("ALARM_CHALLENGE_TYPE", alarmChallengeType) // (use actual variable)
-        }
-        context.startActivity(ringingIntent)
 
         // Start the foreground service to play the alarm sound
         val serviceIntent = Intent(context, AlarmService::class.java).apply {

@@ -1,9 +1,14 @@
 package com.example.neversnooze
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
@@ -48,9 +53,11 @@ class MainActivity : AppCompatActivity() {
 
         // Apply initial theme
         updateThemeUI()
-
         // Set up click listeners
         setupClickListeners(sharedPrefs)
+
+        requestIgnoreBatteryOptimization()
+        requestOverlayPermission()
     }
 
     private fun initializeViews() {
@@ -198,6 +205,48 @@ class MainActivity : AppCompatActivity() {
 
         cursor.close()
         return alarms
+    }
+    private fun requestIgnoreBatteryOptimization() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+
+        val pm = getSystemService(PowerManager::class.java)
+        val exempt = pm.isIgnoringBatteryOptimizations(packageName)
+
+        if (!exempt) {
+            showPrompt(
+                title = "Allow uninterrupted alarms?",
+                message = "To make sure alarms ring on time, NeverSnooze needs to be excluded from battery optimizations.",
+                intent = Intent(
+                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    Uri.parse("package:$packageName")
+                )
+            )
+        }
+    }
+    private fun requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        if (Settings.canDrawOverlays(this)) return
+
+        showPrompt(
+            title = "Show alarm over other apps?",
+            message = "To display the alarm screen even when you're using another app, NeverSnooze needs the “Appear on top” permission.",
+            intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+        )
+    }
+
+    private fun showPrompt(title: String, message: String, intent: Intent) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Allow") { _, _ ->
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+            .setNegativeButton("Later", null)
+            .show()
     }
 
     private fun onAlarmEnabledChanged(alarm: Alarm, isEnabled: Boolean) {

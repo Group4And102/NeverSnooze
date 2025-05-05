@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="32dp"
     android:background="@android:color/white"
@@ -35,6 +36,7 @@
     <Button
         android:id="@+id/stopAlarmButton"
         android:layout_width="wrap_content"
+        android:minWidth="180dp"
         android:layout_height="wrap_content"
         android:text="Turn Off Alarm"
         android:textSize="18sp"
@@ -45,4 +47,20 @@
         android:paddingBottom="12dp"
         android:elevation="4dp"
         android:gravity="center"/>
+    <!-- Snooze Button -->
+    <Button
+        android:id="@+id/snoozeButton"
+        android:layout_width="wrap_content"
+        android:minWidth="180dp"
+        android:layout_height="wrap_content"
+        android:text="   Snooze   "
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:elevation="4dp"
+        android:gravity="center"/>
+
 </LinearLayout>

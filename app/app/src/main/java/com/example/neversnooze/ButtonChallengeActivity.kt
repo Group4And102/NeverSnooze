@@ -40,11 +40,6 @@ class ButtonChallengeActivity : AppCompatActivity() {
                 // Challenge completed, snooze the alarm
                 val stopIntent = Intent(this, AlarmService::class.java)
                 stopService(stopIntent)
-                if (canScheduleExactAlarms()) {
-                    snoozeAlarm()
-                } else {
-                    requestExactAlarmPermission()
-                }
                 val intent = Intent(this, CongratulationsActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -52,54 +47,10 @@ class ButtonChallengeActivity : AppCompatActivity() {
         }
     }
 
-    private fun canScheduleExactAlarms(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.canScheduleExactAlarms()
-        } else {
-            true
-        }
-    }
 
-    private fun requestExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-            startActivity(intent)
-        }
-    }
-
-    private fun snoozeAlarm() {
-        val intent = Intent(this, AlarmReceiver::class.java).apply {
-            action = "com.example.neversnooze.ALARM_TRIGGERED"
-            putExtra("ALARM_ID", alarmId)
-            putExtra("ALARM_HOUR", alarmHour)
-            putExtra("ALARM_MINUTE", alarmMinute)
-            putExtra("ALARM_LABEL", intent.getStringExtra("ALARM_LABEL") ?: "")
-            putExtra("ALARM_SOUND", intent.getStringExtra("ALARM_SOUND") ?: "default_alarm")
-        }
-
-        // Schedule the alarm for 5 minutes later
-        val calendar = java.util.Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            add(java.util.Calendar.MINUTE, 5)
-        }
-
-        val pendingIntent = android.app.PendingIntent.getBroadcast(
-            this,
-            alarmId.toInt(),
-            intent,
-            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val alarmManager = getSystemService(android.content.Context.ALARM_SERVICE) as android.app.AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(
-            android.app.AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
-        )
-    }
-
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     override fun onBackPressed() {
+        super.onBackPressed()
         // Prevent going back
         moveTaskToBack(true)
     }
