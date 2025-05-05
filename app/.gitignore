@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/app/src/main/java/com/example/neversnooze/WeatherConfig.kt
+

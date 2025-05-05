@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
+
 
     private var isDarkTheme = true
     private lateinit var recyclerView: RecyclerView
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         //deleteDatabase("Alarms.db") // ⚠️ Only for one-time reset
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
 
         // Initialize views
         initializeViews()
