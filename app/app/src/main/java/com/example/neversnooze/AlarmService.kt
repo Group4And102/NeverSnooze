@@ -15,6 +15,7 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import android.provider.Settings
 
 /**
  * Foreground service that plays the alarm sound
@@ -25,7 +26,6 @@ class AlarmService : Service() {
     private var vibrator: Vibrator? = null
     private var wakeLock: PowerManager.WakeLock? = null
     private var alarmId: Long = -1
-    private var currentChallengeIndex = 0
 
     companion object {
         private const val TAG = "AlarmService"
@@ -63,42 +63,53 @@ class AlarmService : Service() {
 
         // Extract alarm details from intent
         alarmId = intent?.getLongExtra("ALARM_ID", -1) ?: -1
-        val hour = intent?.getIntExtra("ALARM_HOUR", 0) ?: 0
-        val minute = intent?.getIntExtra("ALARM_MINUTE", 0) ?: 0
-        val label = intent?.getStringExtra("ALARM_LABEL") ?: ""
-        val sound = intent?.getStringExtra("ALARM_SOUND") ?: "default_alarm"
-        val challengeType = intent?.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button" // ✅ ADD THIS LINE
+        val hour           = intent?.getIntExtra("ALARM_HOUR", 0) ?: 0
+        val minute         = intent?.getIntExtra("ALARM_MINUTE", 0) ?: 0
+        val label          = intent?.getStringExtra("ALARM_LABEL") ?: ""
+        val sound          = intent?.getStringExtra("ALARM_SOUND") ?: "default_alarm"
+        val challengeType  = intent?.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button"
+        val alarmExtras    = intent?.extras        // keep the bundle
 
-        Log.d(TAG, "Received challengeType in AlarmService: $challengeType")
-
-        // Create notification
-        val notification = createNotification(hour, minute, label, intent)
+        // Build & post the foreground notification (includes FSI for locked screen)
+        val notification = createNotification(hour, minute, label, sound, challengeType)
         startForeground(NOTIFICATION_ID, notification)
 
-        // Play alarm sound
+        // Determine current device state
+        val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val pm = getSystemService(Context.POWER_SERVICE)   as PowerManager
+        val unlockedAndInteractive = !km.isKeyguardLocked && pm.isInteractive
+        // Continuous vibration (500 ms on, 500 ms off)
+        vibrator?.let { vib ->
+            // delay, vibrate, pause
+            val pattern = longArrayOf(0, 500, 500)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vib.vibrate(VibrationEffect.createWaveform(pattern, 0))
+            } else {
+                @Suppress("DEPRECATION")
+                vib.vibrate(pattern, 0)
+            }
+        }
+        if (unlockedAndInteractive) {
+            if (Settings.canDrawOverlays(this)) {
+                // Launch overlay so we still steal focus
+                val overlay = Intent(this, OverlayChallengeActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    alarmExtras?.let { putExtras(it) }
+                }
+                startActivity(overlay)
+            } else {
+                // Prompt user once to grant “Appear on top”
+                startActivity(
+                    Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName")
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+        }
+
         playAlarmSound(sound)
 
-        // Choose Challenge
-        val normalizedChallenge = challengeType.trim().replace(" ", "")
-        val selectedChallenge = when (normalizedChallenge) {
-            "Math" -> MathActivity::class.java
-            "Shaking" -> ShakingActivity::class.java
-            "ObjectDetection" -> ObjectPromptActivity::class.java
-            else -> ButtonChallengeActivity::class.java
-        }
-
-        // Create and show the selected challenge activity
-        val challengeIntent = Intent(this, selectedChallenge).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra("ALARM_ID", alarmId)
-            putExtra("ALARM_HOUR", hour)
-            putExtra("ALARM_MINUTE", minute)
-            putExtra("ALARM_LABEL", label)
-            putExtra("ALARM_SOUND", sound)
-            putExtra("ALARM_CHALLENGE_TYPE", challengeType) // ✅ FIXED: reference the correct variable
-        }
-
-        startActivity(challengeIntent)
         return START_STICKY
     }
 
@@ -110,6 +121,7 @@ class AlarmService : Service() {
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
+                setBypassDnd(true)
             }
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -117,23 +129,14 @@ class AlarmService : Service() {
         }
     }
 
-    private fun createNotification(hour: Int, minute: Int, label: String, intent: Intent?): Notification {
-
-        val challengeType = intent?.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button"
-
-        val selectedChallenge = when (challengeType) {
-            "Math" -> MathActivity::class.java
-            "Shaking" -> ShakingActivity::class.java
-            "ObjectDetection" -> ObjectDetection::class.java
-            else -> ButtonChallengeActivity::class.java
-        }
-
-        val notificationIntent = Intent(this, selectedChallenge).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun createNotification(hour: Int, minute: Int, label: String, sound: String, challengeType: String): Notification {
+        val notificationIntent = Intent(this, AlarmLauncherActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("ALARM_ID", alarmId)
             putExtra("ALARM_HOUR", hour)
             putExtra("ALARM_MINUTE", minute)
             putExtra("ALARM_LABEL", label)
+            putExtra("ALARM_SOUND", sound)
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -145,23 +148,17 @@ class AlarmService : Service() {
 
         val formattedTime = String.format("%02d:%02d", hour, minute)
         val title = if (label.isNotEmpty()) label else "Alarm"
-        val challengeLabel = when (challengeType) {
-            "Math" -> "Math"
-            "Shaking" -> "Shake"
-            "ObjectDetection" -> "Object Detection"
+        val challengeLabel = when (challengeType.lowercase()) {
+            "math" -> "Math"
+            "shake" -> "Shake"
+            "object" -> "Object Detection"
             else -> "Button Press"
         }
 
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
-
             .setContentText("$formattedTime - Complete challenge to stop alarm")
-            .setSmallIcon(R.drawable.ic_notification_alarm) 
-
-            .setContentText("$formattedTime - Complete $challengeLabel challenge to stop alarm")
             .setSmallIcon(R.drawable.ic_notification_alarm)
-
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pendingIntent, true)
@@ -222,17 +219,6 @@ class AlarmService : Service() {
         }
     }
 
-    fun stopAlarm() {
-        // Stop media player
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-
-        // Stop the foreground service
-        stopForeground(true)
-        stopSelf()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
@@ -246,6 +232,7 @@ class AlarmService : Service() {
         // Clean up media player
         mediaPlayer?.release()
         mediaPlayer = null
+        vibrator?.cancel()
 
         Log.d(TAG, "AlarmService destroyed")
     }

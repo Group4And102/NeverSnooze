@@ -12,9 +12,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -116,7 +119,19 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.NeverSnooze.NoActionBar" />
-
+        <activity
+            android:name=".AlarmLauncherActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+        <activity
+            android:name=".OverlayChallengeActivity"
+            android:theme="@style/Theme.NeverSnooze.NoActionBar"
+            android:exported="false"
+            android:showWhenLocked="false"
+            android:turnScreenOn="false"/>
     </application>
 
 </manifest>
