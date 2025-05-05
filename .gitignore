@@ -12,3 +12,7 @@ app/build/
 app/src/main/java/com/example/neversnooze/WeatherConfig.kt
 
 app/src/main/java/com/example/neversnooze/WeatherConfig.kt
+ 
+app/app/src/main/java/com/example/neversnooze/WeatherConfig.kt
+app/.kotlin/
+
