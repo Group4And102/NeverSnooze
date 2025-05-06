@@ -13,11 +13,13 @@
     <color name="dark_gray">#A9A9A9</color>
     <color name="secondary">#018786</color>  <!-- Teal 700 -->
     <color name="ripple_white">#66FFFFFF</color>  <!-- White with 40% opacity -->
-    <color name="surface">#FFF8F0</color>
+    <color name="surface">#838282</color>
     <color name="button_color">#7F5AF0</color>
     <color name="secondary_text">#A1A6C8</color>
     <color name="alarm_create_background">#FFF8F0</color>
     <color name="alarm_create_background_dark">#232946</color>
+    <color name="red">#FF0000</color>
+    <color name="bgcreate">#42A7F6</color>
 <!--    <color name="surface">#1E1E1E</color>  &lt;!&ndash; Darker surface for cards/sheets &ndash;&gt;-->
 <!--    <color name="button_color">#2196F3</color>-->
 </resources>

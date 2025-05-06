@@ -65,6 +65,7 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <ImageView
+                android:id="@+id/iconPlus"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:src="@drawable/baseline_add_24"
@@ -72,6 +73,7 @@
                 app:tint="@android:color/white" />
 
             <TextView
+                android:id="@+id/noAlarmYet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No alarms yet"
@@ -81,6 +83,7 @@
                 android:layout_marginTop="16dp" />
 
             <TextView
+                android:id="@+id/addFirstAlarmText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tap the + button to add your first alarm"

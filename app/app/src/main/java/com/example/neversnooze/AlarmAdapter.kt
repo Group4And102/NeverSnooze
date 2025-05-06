@@ -64,14 +64,16 @@ class AlarmAdapter(
             holder.itemView.setBackgroundColor(context.getColor(R.color.card_background))
             holder.enableSwitch.thumbTintList = null
             holder.enableSwitch.trackTintList = null
+            holder.challengeText.setTextColor(context.getColor(R.color.white))
         } else {
             // LIGHT MODE: Use light theme colors
             holder.timeText.setTextColor(context.getColor(android.R.color.black))
             holder.daysText.setTextColor(context.getColor(android.R.color.black))
             holder.labelText.setTextColor(context.getColor(android.R.color.black))
             holder.itemView.setBackgroundColor(context.getColor(R.color.surface))
-            holder.enableSwitch.thumbTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
+            holder.enableSwitch.thumbTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.black))
             holder.enableSwitch.trackTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.button_color))
+            holder.challengeText.setTextColor(context.getColor(android.R.color.black))
         }
 
         holder.challengeText.text = "Challenge: ${alarm.challengeType}"
@@ -108,6 +110,12 @@ class AlarmAdapter(
 
         // Handle delete mode
         holder.deleteButton.visibility = if (isDeleteMode) View.VISIBLE else View.GONE
+        holder.deleteButton.setColorFilter(
+            if (isDarkTheme)
+                context.getColor(android.R.color.holo_red_light)
+            else
+                context.getColor(android.R.color.holo_red_light)
+        )
         holder.deleteButton.setOnClickListener {
             onAlarmClick(alarm)
         }
