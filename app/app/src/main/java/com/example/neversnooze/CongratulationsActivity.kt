@@ -28,14 +28,16 @@ import java.net.URL
 class CongratulationsActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST = 1001
-    private val apiKey = WeatherConfig.API_KEY// Replace with your actual OpenWeatherMap API key
+    private val apiKey = WeatherConfig.API_KEY // Replace with your actual OpenWeatherMap API key
     private lateinit var weatherIcon: ImageView
+    private lateinit var weatherDescription: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_congratulations)
 
         weatherIcon = findViewById(R.id.weatherIcon)
+        weatherDescription = findViewById(R.id.weatherDescription)
         weatherIcon.visibility = View.VISIBLE
 
         val quoteText = findViewById<TextView>(R.id.quoteText)
@@ -74,6 +76,7 @@ class CongratulationsActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
         val snoozeButton = findViewById<Button>(R.id.snoozeButton)
         snoozeButton.setOnClickListener {
             stopService(Intent(this, AlarmService::class.java))
@@ -131,21 +134,21 @@ class CongratulationsActivity : AppCompatActivity() {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 location?.let {
-                    fetchWeatherIcon(it.latitude, it.longitude)
+                    fetchWeatherData(it.latitude, it.longitude)
                 } ?: run {
                     // Fallback to default location if lastLocation is null
-                    fetchWeatherIcon(40.7128, -74.0060) // Default to New York
+                    fetchWeatherData(40.7128, -74.0060) // Default to New York
                 }
             }.addOnFailureListener { e ->
                 // Fallback if location fails
-                fetchWeatherIcon(40.7128, -74.0060) // Default to New York
+                fetchWeatherData(40.7128, -74.0060) // Default to New York
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
     }
 
-    private fun fetchWeatherIcon(lat: Double, lon: Double) {
+    private fun fetchWeatherData(lat: Double, lon: Double) {
         Thread {
             try {
                 val url = URL("https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric")
@@ -159,20 +162,29 @@ class CongratulationsActivity : AppCompatActivity() {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 val json = JSONObject(response)
                 val weatherArray = json.getJSONArray("weather")
-                val iconCode = weatherArray.getJSONObject(0).getString("icon")
+                val weatherObject = weatherArray.getJSONObject(0)
+                val iconCode = weatherObject.getString("icon")
+                val description = weatherObject.getString("description")
+                val temp = json.getJSONObject("main").getDouble("temp")
                 val iconUrl = "https://openweathermap.org/img/wn/$iconCode@4x.png"
 
                 runOnUiThread {
+                    // Update weather icon
                     Glide.with(this@CongratulationsActivity)
                         .load(iconUrl)
                         .placeholder(R.drawable.ic_weather_loading)
                         .error(R.drawable.ic_weather_default)
                         .into(weatherIcon)
+
+                    // Update weather description
+                    val formattedDescription = description.replaceFirstChar { it.uppercase() }
+                    weatherDescription.text = "$formattedDescription, ${temp.toInt()}°C"
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 runOnUiThread {
                     weatherIcon.setImageResource(R.drawable.ic_weather_default)
+                    weatherDescription.text = "Weather data unavailable"
                 }
             }
         }.start()
