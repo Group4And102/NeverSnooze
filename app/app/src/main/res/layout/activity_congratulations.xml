@@ -30,6 +30,17 @@
         android:contentDescription="Weather Icon"
         android:layout_marginBottom="16dp"/>
 
+        <!-- Weather Description -->
+        <TextView
+            android:id="@+id/weatherDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="It is ..."
+            android:textSize="14sp"
+            android:textColor="#222"
+            android:textAlignment="center"
+            android:layout_marginBottom="24dp"/>
+
     <!-- Congratulations Message -->
     <TextView
         android:id="@+id/congratsText"
