@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import android.content.Intent
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
@@ -118,6 +119,23 @@ class AlarmAdapter(
                 onAlarmClick(alarm)
             }
         }
+        // Handle test button click
+        holder.itemView.findViewById<ImageButton>(R.id.testButton).setOnClickListener {
+            val ctx = holder.itemView.context
+
+            val testIntent = Intent(ctx, AlarmReceiver::class.java).apply {
+                action = "com.example.neversnooze.ALARM_TRIGGERED"
+                putExtra("ALARM_ID",     alarm.id)
+                putExtra("ALARM_HOUR",   alarm.hour)
+                putExtra("ALARM_MINUTE", alarm.minute)
+                putExtra("ALARM_LABEL",  alarm.label)
+                putExtra("ALARM_SOUND",  alarm.sound)
+                putExtra("ALARM_CHALLENGE_TYPE", alarm.challengeType)
+            }
+            ctx.sendBroadcast(testIntent)
+        }
+
+
     }
 
     override fun getItemCount() = alarms.size
