@@ -139,7 +139,7 @@ class AlarmService : Service() {
             putExtra("ALARM_MINUTE", minute)
             putExtra("ALARM_LABEL", label)
             putExtra("ALARM_SOUND", sound)
-            putExtra("AlARM_CHALLENGE_TYPE", challengeType)
+            putExtra("ALARM_CHALLENGE_TYPE", challengeType)
         }
 
         val pendingIntent = PendingIntent.getActivity(
