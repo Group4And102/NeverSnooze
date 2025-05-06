@@ -80,15 +80,21 @@ class AlarmService : Service() {
         val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         val pm = getSystemService(Context.POWER_SERVICE)   as PowerManager
         val unlockedAndInteractive = !km.isKeyguardLocked && pm.isInteractive
-        // Continuous vibration (500 ms on, 500 ms off)
-        vibrator?.let { vib ->
-            // delay, vibrate, pause
-            val pattern = longArrayOf(0, 500, 500)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vib.vibrate(VibrationEffect.createWaveform(pattern, 0))
-            } else {
-                @Suppress("DEPRECATION")
-                vib.vibrate(pattern, 0)
+        // don't vibrate if activity is object detection
+        if (!challengeType.equals(
+                getString(R.string.challenge_object),
+                ignoreCase = true
+            )
+        ) {
+            /* continuous 500 ms on / 500 ms off */
+            vibrator?.let { vib ->
+                val pattern = longArrayOf(0, 500, 500)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vib.vibrate(VibrationEffect.createWaveform(pattern, 0))
+                } else {
+                    @Suppress("DEPRECATION")
+                    vib.vibrate(pattern, 0)
+                }
             }
         }
         if (unlockedAndInteractive) {
