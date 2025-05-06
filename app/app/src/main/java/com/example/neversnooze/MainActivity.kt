@@ -11,10 +11,12 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -35,6 +37,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var alarmContainer: ConstraintLayout
     private lateinit var buttonBar: LinearLayout
     private lateinit var titleText: AppCompatTextView
+    private lateinit var iconPlus: AppCompatImageView
+    private lateinit var noAlarmYet: AppCompatTextView
+    private lateinit var addFirstAlarmText: AppCompatTextView
     private var isDeleteMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +77,9 @@ class MainActivity : AppCompatActivity() {
         trashButton = findViewById(R.id.trashButton)
         recyclerView = findViewById(R.id.alarmRecyclerView)
         dbHelper = AlarmDatabaseHelper(this)
+        iconPlus = findViewById(R.id.iconPlus)
+        noAlarmYet = findViewById(R.id.noAlarmYet)
+        addFirstAlarmText = findViewById(R.id.addFirstAlarmText)
     }
 
     private fun setupRecyclerView() {
@@ -123,15 +131,35 @@ class MainActivity : AppCompatActivity() {
             findViewById<AppCompatImageButton>(R.id.addButton).imageTintList = buttonTint
             trashButton.imageTintList = buttonTint
         } else {
-            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.background))
-            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.background))
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background))
+            alarmContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background))
             buttonBar.setBackgroundColor(ContextCompat.getColor(this, R.color.surface))
-            titleText.setTextColor(ContextCompat.getColor(this, R.color.navy_blue))
+            titleText.setTextColor(ContextCompat.getColor(this, R.color.black))
+            iconPlus.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            noAlarmYet.setTextColor(ContextCompat.getColor(this, R.color.black))
+            addFirstAlarmText.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.button_color))
+            val buttonTint = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black))
             themeButton.imageTintList = buttonTint
             findViewById<AppCompatImageButton>(R.id.addButton).imageTintList = buttonTint
             trashButton.imageTintList = buttonTint
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = window.insetsController
+            if (controller != null) {
+                controller.setSystemBarsAppearance(
+                    if (!isDarkTheme) WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS else 0,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = if (!isDarkTheme) {
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                0
+            }
         }
 
         // Update adapter theme
@@ -284,17 +312,20 @@ class MainActivity : AppCompatActivity() {
     private fun toggleDeleteMode() {
         isDeleteMode = !isDeleteMode
         alarmAdapter.setDeleteMode(isDeleteMode)
-        
-        // Update trash button appearance
+
+        // Use imageTintList instead of setColorFilter for consistency
         if (isDeleteMode) {
-            trashButton.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_red_light))
+            trashButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_red_light))
         } else {
-            trashButton.setColorFilter(
-                if (isDarkTheme) ContextCompat.getColor(this, android.R.color.white)
-                else ContextCompat.getColor(this, R.color.navy_blue)
-            )
+            val tintColor = if (isDarkTheme)
+                ContextCompat.getColor(this, android.R.color.white)
+            else
+                ContextCompat.getColor(this, R.color.black)
+
+            trashButton.imageTintList = ColorStateList.valueOf(tintColor)
         }
     }
+
 
     private fun deleteAlarm(alarm: Alarm) {
         // Cancel the alarm first

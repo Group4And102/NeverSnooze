@@ -45,8 +45,10 @@ class AlarmCreateActivity : AppCompatActivity() {
             .getBoolean("dark_theme", true)
         if (isDarkTheme) {
             rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background_dark))
+            window.statusBarColor = ContextCompat.getColor(this, R.color.alarm_create_background_dark)
         } else {
-            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.alarm_create_background))
+            rootLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.bgcreate))
+            window.statusBarColor = ContextCompat.getColor(this, R.color.bgcreate)
         }
 
         val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
