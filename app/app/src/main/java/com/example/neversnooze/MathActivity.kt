@@ -15,7 +15,7 @@ class MathActivity : AppCompatActivity() {
     private lateinit var submitButton: Button
 
     private var currentProblem = 1
-    private val totalProblems = 3 // Reduced to 3 problems for better UX
+    private val totalProblems = 5
     private var correctAnswer = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +42,33 @@ class MathActivity : AppCompatActivity() {
 
         showNextProblem()
     }
-
+    /// Generates a random math problem
     private fun generateMathProblem(): Pair<String, Int> {
-        val num1 = Random.nextInt(10, 100)
-        val num2 = Random.nextInt(10, 100)
-        return Pair("$num1 + $num2", num1 + num2)
+        return when (Random.nextInt(4)) {
+            0 -> { // addition
+                val a = Random.nextInt(11, 100)
+                val b = Random.nextInt(11, 100)
+                Pair("$a + $b", a + b)
+            }
+            1 -> { // subtraction (non‑negative)
+                val a = Random.nextInt(11, 100)
+                val b = Random.nextInt(11, 100)
+                val max = maxOf(a, b)
+                val min = minOf(a, b)
+                Pair("$max − $min", max - min)
+            }
+            2 -> { // multiplication
+                val a = Random.nextInt(11, 20)
+                val b = Random.nextInt(11, 20)
+                Pair("$a × $b", a * b)
+            }
+            else -> { // division (integer result)
+                val divisor  = Random.nextInt(7, 16)
+                val quotient = Random.nextInt(7, 16)
+                val dividend = divisor * quotient
+                Pair("$dividend ÷ $divisor", quotient)
+            }
+        }
     }
 
     private fun showNextProblem() {
