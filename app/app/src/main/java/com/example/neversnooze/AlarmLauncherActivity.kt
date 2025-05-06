@@ -33,13 +33,13 @@ class AlarmLauncherActivity : AppCompatActivity() {
         val alarmMinute = intent.getIntExtra("ALARM_MINUTE", 0)
         val alarmLabel = intent.getStringExtra("ALARM_LABEL") ?: ""
         val alarmSound = intent.getStringExtra("ALARM_SOUND") ?: "default_alarm"
-        val challengeType = intent.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button"
+        val challengeType = intent.getStringExtra("ALARM_CHALLENGE_TYPE") ?: getString(R.string.challenge_tap_button)
 
-        val challengeActivity = when (challengeType.lowercase()) {
-            "math" -> MathActivity::class.java
-            "shake" -> ShakingActivity::class.java
-            "object" -> ObjectPromptActivity::class.java
-            else -> ButtonChallengeActivity::class.java
+        val challengeActivity = when (challengeType) {
+            getString(R.string.challenge_math)     -> MathActivity::class.java
+            getString(R.string.challenge_shaking)  -> ShakingActivity::class.java
+            getString(R.string.challenge_object)   -> ObjectPromptActivity::class.java
+            else                                   -> ButtonChallengeActivity::class.java
         }
 
         val challengeIntent = Intent(this, challengeActivity).apply {

@@ -1,7 +1,9 @@
 package com.example.neversnooze
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -146,6 +148,7 @@ class AlarmCreateActivity : AppCompatActivity() {
 
         val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
         val challenge = activitySpinner.selectedItem.toString()
+        Log.d(TAG, "Saving alarm with challengeType = \"$challenge\"")
 
         val values = ContentValues().apply {
             put(AlarmContract.AlarmEntry.COLUMN_HOUR, hour)
