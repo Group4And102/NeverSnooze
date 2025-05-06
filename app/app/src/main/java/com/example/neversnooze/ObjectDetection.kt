@@ -36,6 +36,7 @@ import android.content.Intent
 //private val targetObjects = listOf("chair", "laptop", "keyboard", "tv", "mouse", "cell phone")
 private lateinit var targetLabel: String
 private var detected = false
+private var cameraCaptureSession: CameraCaptureSession? = null
 
 class ObjectDetection : AppCompatActivity() {
 
@@ -64,6 +65,7 @@ class ObjectDetection : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        detected = false // ← Reset here
         get_permission()
 
         labels = FileUtil.loadLabels(this, "labels.txt")
@@ -168,7 +170,16 @@ class ObjectDetection : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         model.close()
+
+        try {
+            cameraCaptureSession?.stopRepeating()
+            cameraCaptureSession?.close()
+            cameraDevice.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
+
 
     @SuppressLint("MissingPermission")
     fun open_camera(){
@@ -184,7 +195,8 @@ class ObjectDetection : AppCompatActivity() {
 
                 cameraDevice.createCaptureSession(listOf(surface), object:CameraCaptureSession.StateCallback(){
                     override fun onConfigured(p0: CameraCaptureSession) {
-                        p0.setRepeatingRequest(captureRequest.build(), null, null)
+                        cameraCaptureSession = p0
+                        cameraCaptureSession?.setRepeatingRequest(captureRequest.build(), null, null)
                     }
 
                     override fun onConfigureFailed(session: CameraCaptureSession) {
