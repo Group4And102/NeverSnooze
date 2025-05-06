@@ -140,6 +140,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        /* If an alarm is actively ringing, reopen its challenge screen */
+        AlarmService.activeAlarmExtras?.let { bundle ->
+            val launcher = Intent(this, AlarmLauncherActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtras(bundle)
+            }
+            startActivity(launcher)
+            return
+        }
         loadAlarms()
     }
 

@@ -24,15 +24,21 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         Log.d(TAG, "Alarm triggered!")
-
         val alarmId = intent.getLongExtra("ALARM_ID", -1)
         val alarmHour = intent.getIntExtra("ALARM_HOUR", 0)
         val alarmMinute = intent.getIntExtra("ALARM_MINUTE", 0)
         val alarmLabel = intent.getStringExtra("ALARM_LABEL") ?: ""
-        val alarmSound = intent.getStringExtra("ALARM_SOUND") ?: "default_alarm"
+
+        val extraSound     = intent.getStringExtra("ALARM_SOUND")
+        val extraChallenge = intent.getStringExtra("ALARM_CHALLENGE_TYPE")
+
         val dbHelper = AlarmDatabaseHelper(context)
-        val alarm = dbHelper.getAlarmById(alarmId)
-        val alarmChallengeType = alarm?.challengeType ?: "Button"
+        val alarmRow = dbHelper.getAlarmById(alarmId)
+
+        val alarmSound = extraSound ?: alarmRow?.sound ?: "chimes"
+        val alarmChallengeType = extraChallenge
+            ?: alarmRow?.challengeType
+            ?: context.getString(R.string.challenge_tap_button)
 
 
         Log.d(TAG, "Alarm details: ID=$alarmId, Time=$alarmHour:$alarmMinute, Label=$alarmLabel, Sound=$alarmSound, Challenge=$alarmChallengeType")

@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.VibrationEffect
@@ -31,6 +32,7 @@ class AlarmService : Service() {
         private const val TAG = "AlarmService"
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "NeverSnoozeAlarmChannel"
+        var activeAlarmExtras : Bundle? = null
     }
 
     override fun onCreate() {
@@ -109,7 +111,7 @@ class AlarmService : Service() {
         }
 
         playAlarmSound(sound)
-
+        activeAlarmExtras = intent?.extras
         return START_STICKY
     }
 
@@ -137,6 +139,7 @@ class AlarmService : Service() {
             putExtra("ALARM_MINUTE", minute)
             putExtra("ALARM_LABEL", label)
             putExtra("ALARM_SOUND", sound)
+            putExtra("AlARM_CHALLENGE_TYPE", challengeType)
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -233,7 +236,7 @@ class AlarmService : Service() {
         mediaPlayer?.release()
         mediaPlayer = null
         vibrator?.cancel()
-
+        activeAlarmExtras = null
         Log.d(TAG, "AlarmService destroyed")
     }
 

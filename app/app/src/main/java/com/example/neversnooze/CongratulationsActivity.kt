@@ -74,6 +74,45 @@ class CongratulationsActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        val snoozeButton = findViewById<Button>(R.id.snoozeButton)
+        snoozeButton.setOnClickListener {
+            stopService(Intent(this, AlarmService::class.java))
+            val alarmId      = intent.getLongExtra("ALARM_ID", -1)
+            val alarmHour    = intent.getIntExtra("ALARM_HOUR", 0)
+            val alarmMinute  = intent.getIntExtra("ALARM_MINUTE", 0)
+            val alarmLabel   = intent.getStringExtra("ALARM_LABEL") ?: ""
+            val alarmSound   = intent.getStringExtra("ALARM_SOUND") ?: "default_alarm"
+            val challenge    = intent.getStringExtra("ALARM_CHALLENGE_TYPE") ?: getString(R.string.challenge_tap_button)
+            val snoozeIntent = Intent(this, AlarmReceiver::class.java).apply {
+                action = "com.example.neversnooze.ALARM_TRIGGERED"
+                putExtras(intent.extras ?: Bundle())
+                putExtra("ALARM_ID", alarmId)
+            }
+
+            val requestCode = (alarmId.toInt() * 1000) + 9
+            val pending = PendingIntent.getBroadcast(
+                this, requestCode, snoozeIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            // Schedule snooze alarm
+            val triggerAt = System.currentTimeMillis() + 30 * 1000
+            val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (am.canScheduleExactAlarms()) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
+                } else {
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
+                }
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pending)
+            }
+
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+        }
     }
 
     private fun getWeatherForCurrentLocation() {
@@ -147,49 +186,6 @@ class CongratulationsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getWeatherForCurrentLocation()
-        }
-        val snoozeButton = findViewById<Button>(R.id.snoozeButton)
-        snoozeButton.setOnClickListener {
-            stopService(Intent(this, AlarmService::class.java))
-            val alarmId      = intent.getLongExtra("ALARM_ID", -1)
-            val alarmHour    = intent.getIntExtra("ALARM_HOUR", 0)
-            val alarmMinute  = intent.getIntExtra("ALARM_MINUTE", 0)
-            val alarmLabel   = intent.getStringExtra("ALARM_LABEL") ?: ""
-            val alarmSound   = intent.getStringExtra("ALARM_SOUND") ?: "default_alarm"
-            val challenge    = intent.getStringExtra("ALARM_CHALLENGE_TYPE") ?: "Button"
-            val snoozeIntent = Intent(this, AlarmReceiver::class.java).apply {
-                action = "com.example.neversnooze.ALARM_TRIGGERED"
-                putExtra("ALARM_ID", alarmId)
-                putExtra("ALARM_HOUR", alarmHour)
-                putExtra("ALARM_MINUTE", alarmMinute)
-                putExtra("ALARM_LABEL", alarmLabel)
-                putExtra("ALARM_SOUND", alarmSound)
-                putExtra("ALARM_CHALLENGE_TYPE", challenge)
-            }
-
-            val requestCode = (alarmId.toInt() * 1000) + 9
-            val pending = PendingIntent.getBroadcast(
-                this, requestCode, snoozeIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            // Schedule alarm exactly 9 minutes from now
-            val triggerAt = System.currentTimeMillis() + 9 * 60 * 1000
-            val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (am.canScheduleExactAlarms()) {
-                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-                } else {
-                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-                }
-            } else {
-                am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-            }
-
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-            finish()
         }
     }
 }

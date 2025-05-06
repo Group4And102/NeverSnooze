@@ -60,9 +60,11 @@ class MathActivity : AppCompatActivity() {
             currentProblem++
         } else {
             // Challenge completed successfully
-            // setResult(RESULT_OK)
-            val intent = Intent(this, CongratulationsActivity::class.java)
-            startActivity(intent)
+            // Forwards all alarm details (for snoozing)
+            val congrats = Intent(this, CongratulationsActivity::class.java).apply {
+                putExtras(intent.extras ?: Bundle())
+            }
+            startActivity(congrats)
             finish()
         }
     }

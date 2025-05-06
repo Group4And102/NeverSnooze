@@ -143,9 +143,15 @@ class ObjectDetection : AppCompatActivity() {
                         // Check match and move to Congrats screen once
                         if (!detected && detectedLabel.equals(targetLabel, ignoreCase = true)) {
                             detected = true
-                            val intent = Intent(this@ObjectDetection, CongratulationsActivity::class.java)
-                            intent.putExtra("TARGET_OBJECT", targetLabel)
-                            startActivity(intent)
+                            // Forwards all alarm details (for snoozing)
+                            val congrats = Intent(
+                                this@ObjectDetection,
+                                CongratulationsActivity::class.java
+                            ).apply {
+                                putExtras(intent.extras ?: Bundle())
+                                putExtra("TARGET_OBJECT", targetLabel)
+                            }
+                            startActivity(congrats)
                             finish() // closes camera screen
                         }
 
