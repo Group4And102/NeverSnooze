@@ -166,12 +166,40 @@ class AlarmCreateActivity : AppCompatActivity() {
         val newRowId = db.insert(AlarmContract.AlarmEntry.TABLE_NAME, null, values)
 
         if (newRowId != -1L) {
-            Toast.makeText(this, "Alarm created successfully", Toast.LENGTH_SHORT).show()
             val savedAlarm = dbHelper.getAlarmById(newRowId)
             if (savedAlarm != null) {
                 AlarmScheduler.scheduleAlarm(this, savedAlarm)
+
+                val now   = java.util.Calendar.getInstance()
+                var next  = now.clone() as java.util.Calendar
+                next.set(java.util.Calendar.HOUR_OF_DAY, savedAlarm.hour)
+                next.set(java.util.Calendar.MINUTE,       savedAlarm.minute)
+                next.set(java.util.Calendar.SECOND, 0)
+                next.set(java.util.Calendar.MILLISECOND, 0)
+
+                if (savedAlarm.days.any { it }) {            // repeating
+                    var offset = 0
+                    while (true) {
+                        val idx = (now.get(java.util.Calendar.DAY_OF_WEEK) - 1 + offset) % 7
+                        if (savedAlarm.days[idx] && next.timeInMillis > now.timeInMillis) break
+                        next.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                        offset += 1
+                    }
+                } else {                                     // one‑shot
+                    if (next.timeInMillis <= now.timeInMillis) {
+                        next.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                    }
+                }
+
+                val diff   = next.timeInMillis - now.timeInMillis
+                val hours  = diff / 3_600_000
+                val mins   = (diff / 60_000) % 60
+                android.widget.Toast
+                    .makeText(this, "Alarm set – rings in ${hours}h ${mins}m", android.widget.Toast.LENGTH_LONG)
+                    .show()
             }
             finish()
+
         } else {
             Toast.makeText(this, "Error creating alarm", Toast.LENGTH_SHORT).show()
         }
