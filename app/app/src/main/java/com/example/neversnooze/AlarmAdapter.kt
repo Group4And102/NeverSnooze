@@ -15,6 +15,10 @@ class AlarmAdapter(
     private val onAlarmClick: (Alarm) -> Unit
 ) : RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
 
+    companion object {
+        private var activeToast: Toast? = null
+    }
+
     private var isDeleteMode = false
     private var isDarkTheme = true
 
@@ -80,57 +84,39 @@ class AlarmAdapter(
         holder.challengeText.text = "Challenge: ${alarm.challengeType}"
 
 
-        // Set the enabled status
+        holder.enableSwitch.setOnCheckedChangeListener(null)
         holder.enableSwitch.isChecked = alarm.enabled
 
-        // Set listener for switch
         holder.enableSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val context = holder.itemView.context
-            val updatedAlarm = alarm.copy(enabled = isChecked)
-            AlarmDatabaseHelper(context).updateAlarm(updatedAlarm)
+            val pos = holder.adapterPosition
+            if (pos == RecyclerView.NO_POSITION) return@setOnCheckedChangeListener
+
+            val updated = alarms[pos].copy(enabled = isChecked)
+            alarms = alarms.toMutableList().apply { set(pos, updated) }
+            AlarmDatabaseHelper(context).updateAlarm(updated)
 
             if (isChecked) {
-                AlarmScheduler.scheduleAlarm(context, updatedAlarm)
+                AlarmScheduler.scheduleAlarm(context, updated)
             } else {
-                AlarmScheduler.cancelAlarm(context, updatedAlarm)
+                AlarmScheduler.cancelAlarm(context, updated)
             }
 
-            val toastMsg = if (isChecked) {
+            val msg = if (isChecked) {
                 val now = java.util.Calendar.getInstance()
-
-                // find next ring time
-                var next = now.clone() as java.util.Calendar
-                next.set(java.util.Calendar.HOUR_OF_DAY, updatedAlarm.hour)
-                next.set(java.util.Calendar.MINUTE,       updatedAlarm.minute)
-                next.set(java.util.Calendar.SECOND, 0)
-                next.set(java.util.Calendar.MILLISECOND, 0)
-
-                if (updatedAlarm.days.any { it }) {
-                    var offset = 0
-                    while (true) {
-                        val dayIndex = (now.get(java.util.Calendar.DAY_OF_WEEK) - 1 + offset) % 7
-                        if (updatedAlarm.days[dayIndex] && next.timeInMillis > now.timeInMillis) break
-                        next.add(java.util.Calendar.DAY_OF_YEAR, 1)
-                        offset += 1
-                    }
-                } else {
-                    if (next.timeInMillis <= now.timeInMillis) next.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                val next = (now.clone() as java.util.Calendar).apply {
+                    set(java.util.Calendar.HOUR_OF_DAY, updated.hour)
+                    set(java.util.Calendar.MINUTE, updated.minute)
+                    set(java.util.Calendar.SECOND, 0); set(java.util.Calendar.MILLISECOND, 0)
+                    if (timeInMillis <= now.timeInMillis) add(java.util.Calendar.DAY_OF_YEAR, 1)
                 }
+                val diff = next.timeInMillis - now.timeInMillis
+                val h = diff / 3_600_000
+                val m = (diff / 60_000) % 60
+                "Alarm enabled – rings in ${h}h ${m}m"
+            } else "Alarm disabled"
 
-                val diffMs = next.timeInMillis - now.timeInMillis
-                val hours  = diffMs / 3_600_000
-                val mins   = (diffMs / 60_000) % 60
-                "Alarm enabled – rings in ${hours}h ${mins}m"
-            } else {
-                "Alarm disabled"
-            }
-
-            android.widget.Toast.makeText(context, toastMsg, android.widget.Toast.LENGTH_LONG).show()
-
-            holder.itemView.post {
-                alarms = alarms.toMutableList().apply { set(position, updatedAlarm) }
-                notifyItemChanged(position)
-            }
+            activeToast?.cancel()
+            activeToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT).also { it.show() }
         }
 
 
