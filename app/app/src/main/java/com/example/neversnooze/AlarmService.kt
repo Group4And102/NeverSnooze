@@ -33,6 +33,9 @@ class AlarmService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "NeverSnoozeAlarmChannel"
         var activeAlarmExtras : Bundle? = null
+
+        internal var vibratorRef: Vibrator? = null
+        fun stopVibration()  { vibratorRef?.cancel() }
     }
 
     override fun onCreate() {
@@ -47,6 +50,8 @@ class AlarmService : Service() {
             @Suppress("DEPRECATION")
             getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
+
+        vibratorRef = vibrator
 
         // Acquire wake lock to keep device awake
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
