@@ -31,6 +31,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import android.widget.TextView
 import android.content.Intent
+import android.os.Vibrator
 
 //private val targetObjects = listOf("chair", "toilet", "sink", "laptop", "keyboard", "refrigerator")
 //private val targetObjects = listOf("chair", "laptop", "keyboard", "tv", "mouse", "cell phone")
@@ -58,6 +59,7 @@ class ObjectDetection : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)?.cancel()
         enableEdgeToEdge()
         setContentView(R.layout.object_detection)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
