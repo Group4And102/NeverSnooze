@@ -175,34 +175,49 @@ object AlarmScheduler {
     fun cancelAlarm(context: Context, alarm: Alarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        // Cancel the one-time alarm
-        val oneTimeIntent = Intent(context, AlarmReceiver::class.java)
-        val oneTimePendingIntent = PendingIntent.getBroadcast(
+        val oneTimeIntent = Intent(context, AlarmReceiver::class.java).apply {
+            action = "com.example.neversnooze.ALARM_TRIGGERED"
+            putExtra("ALARM_ID",     alarm.id)
+            putExtra("ALARM_HOUR",   alarm.hour)
+            putExtra("ALARM_MINUTE", alarm.minute)
+            putExtra("ALARM_LABEL",  alarm.label)
+            putExtra("ALARM_SOUND",  alarm.sound)
+            putExtra("ALARM_CHALLENGE_TYPE", alarm.challengeType)
+        }
+
+        PendingIntent.getBroadcast(
             context,
             alarm.id.toInt(),
             oneTimeIntent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        oneTimePendingIntent?.let {
-            alarmManager.cancel(it)
-            it.cancel()
+        )?.let { pi ->
+            alarmManager.cancel(pi)
+            pi.cancel()
         }
 
         // Cancel all repeating alarms (one for each day)
-        for (i in 0..6) {
-            val requestCode = (alarm.id.toInt() * 10) + i
-            val repeatingIntent = Intent(context, AlarmReceiver::class.java)
-            val repeatingPendingIntent = PendingIntent.getBroadcast(
-                context,
-                requestCode,
-                repeatingIntent,
-                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-            )
+        for (day in 0..6) {
+            if (!alarm.days[day]) continue   // skip days that were never set
 
-            repeatingPendingIntent?.let {
-                alarmManager.cancel(it)
-                it.cancel()
+            val reqCode = (alarm.id.toInt() * 10) + day
+            val repeatIntent = Intent(context, AlarmReceiver::class.java).apply {
+                action = "com.example.neversnooze.ALARM_TRIGGERED"
+                putExtra("ALARM_ID",     alarm.id)
+                putExtra("ALARM_HOUR",   alarm.hour)
+                putExtra("ALARM_MINUTE", alarm.minute)
+                putExtra("ALARM_LABEL",  alarm.label)
+                putExtra("ALARM_SOUND",  alarm.sound)
+                putExtra("ALARM_CHALLENGE_TYPE", alarm.challengeType)
+            }
+
+            PendingIntent.getBroadcast(
+                context,
+                reqCode,
+                repeatIntent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )?.let { pi ->
+                alarmManager.cancel(pi)
+                pi.cancel()
             }
         }
 
